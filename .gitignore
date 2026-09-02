@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# vitepress build output & cache (built fresh by CI)
+.vitepress/cache/
+.vitepress/dist/
+
+# misc
+.DS_Store
+Thumbs.db
+*.log新建 文本文档.txt
+
