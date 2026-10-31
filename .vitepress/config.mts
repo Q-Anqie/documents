@@ -11,8 +11,17 @@ export default defineConfig({
   lastUpdated: true,
 
   head: [
-    ['link', { rel: 'icon', href: '/documents/logo.ico' }]
+    ['link', { rel: 'icon', href: '/documents/logo.ico' }],
+    ['meta', { name: 'theme-color', content: '#4f46e5' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: '安且文档库 · Minecraft 模组开发中文资料' }],
+    ['meta', { property: 'og:description', content: 'NeoForge 1.21.1 官方文档全译、模组开发教程、术语表与排错手册' }]
   ],
+
+  markdown: {
+    theme: { light: 'github-light', dark: 'github-dark' },
+    lineNumbers: false
+  },
 
   themeConfig: {
     siteTitle: "文档库",
@@ -790,6 +799,11 @@ export default defineConfig({
     darkModeSwitchTitle: '切换到深色模式',
     lastUpdatedText: '最后更新',
     externalLinkIcon: true,
+
+    editLink: {
+      pattern: 'https://github.com/Q-Anqie/documents/edit/main/:path',
+      text: '在 GitHub 上编辑此页'
+    },
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Q-Anqie/documents' }
