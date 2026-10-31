@@ -5,7 +5,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: "安且文档库",
   titleTemplate: ":title 👉 Anqie's Documents",
-  description: "NeoForge 模组开发教程与中文文档、Java 学习笔记",
+  description: "个人文档仓库：NeoForge 1.21.1 中文文档、模组开发教程、Java 笔记",
   base: "/documents/",
   cleanUrls: true,
   lastUpdated: true,
@@ -14,8 +14,8 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/documents/logo.ico' }],
     ['meta', { name: 'theme-color', content: '#4f46e5' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: '安且文档库 · Minecraft 模组开发中文资料' }],
-    ['meta', { property: 'og:description', content: 'NeoForge 1.21.1 官方文档全译、模组开发教程、术语表与排错手册' }]
+    ['meta', { property: 'og:title', content: '安且文档库 · 个人文档仓库' }],
+    ['meta', { property: 'og:description', content: '个人文档仓库：NeoForge 1.21.1 中文文档、模组开发教程、Java 笔记' }]
   ],
 
   markdown: {
@@ -45,10 +45,10 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/index.md' },
       {
-        text: '模组开发',
+        text: '文档',
         activeMatch: '/docs/(dafeiyu-tutorial|neoforge-1.21.1)/',
         items: [
-          { text: '大肥鱼 MC 教程（从零到发布）', link: '/docs/dafeiyu-tutorial/' },
+          { text: 'MC 模组开发教程', link: '/docs/dafeiyu-tutorial/' },
           { text: 'NeoForge 1.21.1 中文文档', link: '/docs/neoforge-1.21.1/' },
           { text: '术语表', link: '/docs/dafeiyu-tutorial/08-附录/01-术语表' },
           { text: '常见报错手册', link: '/docs/dafeiyu-tutorial/08-附录/02-常见报错与排错手册' }

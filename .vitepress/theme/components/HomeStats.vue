@@ -9,9 +9,9 @@
 
 <script setup>
 const stats = [
-  { value: '63', label: '篇官方文档译文' },
-  { value: '46', label: '篇模组开发教程' },
-  { value: '24万', label: '字中文正文' },
-  { value: '66', label: '条术语词条' }
+  { value: '63', label: '篇文档译文' },
+  { value: '46', label: '篇教程' },
+  { value: '24万', label: '字正文' },
+  { value: '66', label: '条术语' }
 ]
 </script>
