@@ -26,6 +26,10 @@ features:
     details: 17 个模块，从基础语法到集合、Stream、反射、虚拟线程，早前整理的笔记。
     link: /docs/devjava-zh/01-变量与数据类型
     linkText: 查看
+  - title: 软件测试知识体系
+    details: 137 篇系统化教程，覆盖测试入门、工具实战、专项测试、自动化测试、项目实战与面试准备完整技能栈。
+    link: /docs/test-tutorials/
+    linkText: 查看
   - title: 术语表
     details: 66 条术语，按工程、平台、世界、数据、客户端、通信分组，附易混概念对照。
     link: /docs/dafeiyu-tutorial/08-附录/01-术语表
@@ -49,6 +53,7 @@ features:
 | [NeoForge 1.21.1 官方文档（中文）](/docs/neoforge-1.21.1/) | 63 篇 | 对 docs.neoforged.net 1.21.1 版本的全站翻译，按官方栏目组织 |
 | [MC 模组开发教程](/docs/dafeiyu-tutorial/) | 46 篇 | 自己写的教程，含 Java 写法补充、术语表、报错记录 |
 | [Java 学习笔记](/docs/devjava-zh/01-变量与数据类型) | 17 个模块 | 早前整理的语言笔记，与模组内容无直接关联 |
+| [软件测试知识体系](/docs/test-tutorials/) | 137 篇 | 覆盖入门到面试的完整测试技能栈，含自动化、专项、项目实战 |
 | [术语表](/docs/dafeiyu-tutorial/08-附录/01-术语表) | 66 条 | 常用术语的中英对照与释义 |
 | [报错手册](/docs/dafeiyu-tutorial/08-附录/02-常见报错与排错手册) | 29 条 | 遇到过的报错及处理记录 |
 
