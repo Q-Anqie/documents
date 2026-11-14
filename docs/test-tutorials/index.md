@@ -9,6 +9,7 @@ hide:
 ---
 
 ::: v-pre
+::: v-pre
 <section class="home-hero">
 <div class="home-eyebrow">软件测试学习指南</div>
 <h1>软件测试知识体系</h1>
@@ -362,4 +363,6 @@ hide:
 <a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker</a>
 </article>
 </section>
+:::
+
 :::
