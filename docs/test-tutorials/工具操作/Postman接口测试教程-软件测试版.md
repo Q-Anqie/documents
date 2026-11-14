@@ -1180,7 +1180,13 @@ Collection Runner 按顺序执行，可验证整条业务链路。
 | 无权限 | 用普通用户访问管理接口 | 返回 403 |
 | 重复提交 | 短时间内发送 2 次相同请求 | 第 2 次应被拦截 |
 | SQL 注入 | 输入 `' OR '1'='1` | 应被拦截或转义 |
-| XSS 攻击 | 输入 `<script>alert(1)</script>` | 应被过滤 |
+| XSS 攻击 | 输入 `
+```html
+<script>
+alert(1)
+</script>
+```
+` | 应被过滤 |
 
 每个用例独立保存为请求，配合数据驱动，可一次性运行所有异常场景。
 
@@ -1608,9 +1614,8 @@ SSL Error: Unable to verify the first certificate
 
 上面的四层断言是思路，这道题把它变成可运行的校验器：解析响应、校验金额与明细一致、扫描敏感字段。典型错误答案（只看状态码、金额写死）会被判分拦住。
 
-<div class="code-lab" data-lab-id="api-assertion-tiers"></div>
 
-<script type="application/json" class="code-lab-spec">
+```json
 {
   "title": "写一个会抓缺陷的响应校验器（而不是只看状态码）",
   "prelude": "import json\n\n# 一次「订单查询」接口的正常响应（字符串形式，模拟收到的原始响应体）\nGOOD_BODY = json.dumps({\n    'code': 0,\n    'message': 'success',\n    'data': {\n        'orderId': 'ORD-20260901-0001',\n        'status': 'paid',\n        'amount': 1299.00,\n        'items': [\n            {'productId': 101, 'name': 'monitor', 'quantity': 1, 'price': 1299.00}\n        ],\n        'createdAt': '2026-09-01T10:00:03+08:00',\n    },\n}, ensure_ascii=False)\n\n# 敏感字段词表：判分时在 prelude 里给出，避免各人自造词表导致误判\nSENSITIVE = ('password', 'idCard', 'id_card', 'mobile', 'phone', 'token')\n",
@@ -1648,7 +1653,8 @@ SSL Error: Unable to verify the first certificate
     }
   ]
 }
-</script>
+```
+
 
 做完点「检查答案」，每题都会给出具体提示。全对之后，本页会在学习进度里
 自动标记为已通过（进度存在浏览器本地，换设备不会同步）。
@@ -1672,5 +1678,4 @@ SSL Error: Unable to verify the first certificate
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
 </div>
-
 :::

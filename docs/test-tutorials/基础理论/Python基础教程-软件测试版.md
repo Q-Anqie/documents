@@ -862,11 +862,8 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
 
 下面是一个精简版的判分：把「统计」这一步的核心逻辑写出来，点击运行会**自动检查你的实现是否正确**。不需要本地装 Python。
 
-::: v-pre
-<div class="code-lab" data-lab-id="py-report-stats"></div>
-:::
 
-<script type="application/json" class="code-lab-spec">
+```json
 {
   "title": "实现 summarize()：把用例结果统计成汇总数据",
   "starterCode": "def summarize(records):\n    \"\"\"统计用例结果。\n\n    records: list[dict]，每个元素形如\n        {\"name\": \"...\", \"status\": \"PASSED\", \"duration\": 1.23}\n        其中 status 为 \"PASSED\" 或 \"FAILED\"；duration 为秒（float）\n\n    返回 dict：\n        {\"total\": 总数, \"passed\": 通过数, \"failed\": 失败数,\n         \"pass_rate\": 通过率(百分数, 如 69.2), \"total_duration\": 总耗时}\n\n    要求：空列表时 pass_rate 与 total_duration 返回 0.0（不要抛异常）\n    \"\"\"\n    # TODO: 在这里实现\n    pass\n",
@@ -898,7 +895,8 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
     }
   ]
 }
-</script>
+```
+
 
 !!! tip "关于这个在线判分"
     它会**执行你写的函数**并用断言检查结果——所以逻辑对了就能通过，不要求变量名和参考答案完全一致。如果报错信息看不懂，把错误信息复制给 AI 让它解释，也是很好的练法。

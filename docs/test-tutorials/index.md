@@ -9,7 +9,6 @@ hide:
 ---
 
 ::: v-pre
-::: v-pre
 <section class="home-hero">
 <div class="home-eyebrow">软件测试学习指南</div>
 <h1>软件测试知识体系</h1>
@@ -211,7 +210,6 @@ hide:
     → [第3阶段通关检查](学习中心/第3阶段-专项测试通关.md)
 
 === "第 4 阶段：自动化测试"
-:::
 
     > 提升效率，从手工测试转向自动化。**推荐**。
 
@@ -252,7 +250,6 @@ hide:
 
 ## 常用入口
 
-::: v-pre
 <section class="home-tag-grid">
 <article class="home-card home-tag-card">
 <h3>学习中心 2.0</h3>
@@ -301,13 +298,11 @@ hide:
 </div>
 </article>
 </section>
-:::
 
 ---
 
 ## 使用建议
 
-::: v-pre
 <section class="home-notices">
 <div class="home-notice">
 <strong>学习建议</strong>
@@ -326,13 +321,11 @@ hide:
 </ul>
 </div>
 </section>
-:::
 
 ---
 
 ## 外部资源
 
-::: v-pre
 <section class="home-resource-grid">
 <article class="home-card home-resource-card">
 <h3>社区与标准</h3>
@@ -363,6 +356,5 @@ hide:
 <a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker</a>
 </article>
 </section>
-:::
 
 :::

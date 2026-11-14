@@ -894,7 +894,6 @@ async function checkOrderDetail(request: any, orderId: any) {
         }
       }
     }
-:::
     ```
 
     关键点：
@@ -940,3 +939,4 @@ async function checkOrderDetail(request: any, orderId: any) {
 完成本阶段后，使用 [第4阶段-自动化测试通关](../学习中心/第4阶段-自动化测试通关.md) 检查是否可以进入下一阶段。
 
 </div>
+:::
