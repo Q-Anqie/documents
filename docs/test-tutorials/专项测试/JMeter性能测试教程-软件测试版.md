@@ -2252,9 +2252,11 @@ timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success
 
 性能结论能不能站住，先看数字算得对不对。下面用压测报告里的真实数据（Samples 652,000、时长 305 秒、错误数 782、P95 380ms），让你实现一个指标换算函数。点「运行并判分」会自动检查。
 
-<div class="code-lab" data-lab-id="perf-metrics"></div>
+::: info 在线编程练习场
+此功能在原始 MkDocs 站点中提供，当前仅保留练习题目和数据。
+:::
 
-<script type="application/json" class="code-lab-spec">
+```json
 {
   "title": "从压测报告算出结论所需的派生指标",
   "prelude": "DATA = {\n    'total_requests': 652000,\n    'duration_sec': 305,\n    'error_count': 782,\n    'p50': 85,\n    'p90': 260,\n    'p95': 380,\n    'p99': 600,\n    'maximum': 2680,\n}",
@@ -2287,7 +2289,7 @@ timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success
     }
   ]
 }
-</script>
+```
 
 !!! tip "为什么单独练这一步"
     性能测试最容易出的问题不是脚本写错，而是**把数字读错、把结论下反**。例如把错误率 0.12% 当成 0.0012、或者只看 TPS 达标就宣布通过——本题第 5 条断言就是专门用来防止「对当前数据写死答案」的。
