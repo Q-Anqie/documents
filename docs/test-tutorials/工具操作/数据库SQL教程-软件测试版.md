@@ -5,13 +5,13 @@ description: 数据库 SQL 教程，MySQL 增删改查、多表查询和数据�
 
 > 本教程面向软件测试工程师，聚焦测试日常使用场景：数据查询、数据校验、造数据、问题排查。以 MySQL 为主，兼顾通用 SQL 语法。
 
-```html
+::: v-pre
 <div class="tutorial-meta">
-```
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 3 天</span>
     <span class="meta-item">🎯 目标：掌握 SQL 增删改查，能独立进行数据校验</span>
 </div>
+:::
 
 ---
 
@@ -1545,9 +1545,8 @@ EXPLAIN SELECT ...;
 
 ## 下一步建议
 
-```html
+::: v-pre
 <div class="tutorial-next-steps" markdown="1">
-```
 
 ### 完成检查
 
@@ -1571,11 +1570,9 @@ EXPLAIN SELECT ...;
     `WHERE` / `JOIN` / `GROUP BY ... HAVING` 是一一对应的——每个函数的
     docstring 都写了它的 SQL 等价写法，照着对照就能把思维迁移回真实 SQL。
 
-::: info 在线编程练习场
-此功能在原始 MkDocs 站点中提供，当前仅保留练习题目和数据。
-:::
+<div class="code-lab" data-lab-id="sql-amount-audit"></div>
 
-```json
+<script type="application/json" class="code-lab-spec">
 {
   "title": "写数据校验逻辑：找出金额对不上的已支付订单",
   "prelude": "# 说明：浏览器里的 Python 运行时没有数据库引擎（sqlite3 未随发行版提供），\n# 所以本题用「表 = 字典列表」的方式把数据摆出来，你写的校验逻辑和 SQL 里\n# 的 WHERE / JOIN / GROUP BY ... HAVING 是一一对应的。上方教程里给的是真实 SQL。\n\nUSERS = [\n    {'id': 1, 'username': 'zhangsan', 'status': 'active'},\n    {'id': 2, 'username': 'lisi', 'status': 'active'},\n    {'id': 3, 'username': 'wangwu', 'status': 'disabled'},\n]\n\nPRODUCTS = [\n    {'id': 100, 'name': 'keyboard', 'stock': 10},\n    {'id': 101, 'name': 'monitor', 'stock': 3},\n    {'id': 102, 'name': 'mousepad', 'stock': 0},\n]\n\nORDERS = [\n    {'id': 1001, 'user_id': 1, 'product_id': 100, 'quantity': 2,\n     'unit_price': 399.00, 'coupon_amount': 0.00, 'pay_amount': 798.00, 'status': 'paid'},\n    {'id': 1002, 'user_id': 1, 'product_id': 101, 'quantity': 1,\n     'unit_price': 1299.00, 'coupon_amount': 100.00, 'pay_amount': 1199.00, 'status': 'paid'},\n    {'id': 1003, 'user_id': 2, 'product_id': 100, 'quantity': 1,\n     'unit_price': 399.00, 'coupon_amount': 0.00, 'pay_amount': 399.00, 'status': 'pending'},\n    {'id': 1004, 'user_id': 2, 'product_id': 102, 'quantity': 5,\n     'unit_price': 29.90, 'coupon_amount': 0.00, 'pay_amount': 99.50, 'status': 'paid'},\n    {'id': 1005, 'user_id': 3, 'product_id': 101, 'quantity': 2,\n     'unit_price': 1299.00, 'coupon_amount': 0.00, 'pay_amount': 2598.00, 'status': 'paid'},\n    {'id': 1006, 'user_id': 1, 'product_id': 100, 'quantity': 3,\n     'unit_price': 399.00, 'coupon_amount': 200.00, 'pay_amount': 1197.00, 'status': 'cancelled'},\n]\n\n\ndef find(table, **conditions):\n    \"\"\"按字段等值筛选，等价于 SQL 的 WHERE col = value（可传多个条件，AND 关系）。\n\n    例：find('orders', status='paid')  等价于  SELECT * FROM orders WHERE status = 'paid'\n    \"\"\"\n    data = {'users': USERS, 'products': PRODUCTS, 'orders': ORDERS}[table]\n    return [row for row in data\n            if all(row.get(k) == v for k, v in conditions.items())]\n\n\ndef by_id(table, row_id):\n    \"\"\"按主键取一行，找不到返回 None。\"\"\"\n    got = [r for r in find(table) if r['id'] == row_id]\n    return got[0] if got else None\n",
@@ -1608,7 +1605,7 @@ EXPLAIN SELECT ...;
     }
   ]
 }
-```
+</script>
 
 做完点「检查答案」，每题都会给出具体提示。全对之后，本页会在学习进度里
 自动标记为已通过（进度存在浏览器本地，换设备不会同步）。
@@ -1632,3 +1629,5 @@ EXPLAIN SELECT ...;
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
 </div>
+
+:::

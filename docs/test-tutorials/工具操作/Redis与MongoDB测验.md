@@ -6,11 +6,13 @@ description: Redis 与 MongoDB 测验，检验缓存与文档数据库的数据�
 !!! abstract "测验说明"
     本测验用于检验 Redis 与 MongoDB 教程的学习效果。共 12 道选择题，覆盖 Redis 数据类型与常用命令、缓存类场景验证，以及 MongoDB 查询与数据一致性校验。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 25 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Redis 与 MongoDB 测验，检验缓存与文档数据库的数据�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="redis-mongodb">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: Redis 与 MongoDB 测验，检验缓存与文档数据库的数据�
 - [Redis 与 MongoDB 教程](Redis与MongoDB教程-软件测试版.md) - 查看完整教程
 - [SQL 基础测验](SQL基础测验.md) - 对比关系型数据库的查询方式
 - [接口抓包联调实战教程](接口抓包联调实战教程-软件测试版.md) - 把数据校验串进接口测试流程
+
+:::

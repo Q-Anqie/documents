@@ -6,11 +6,13 @@ description: CI/CD 自动化回归测验，检验流水线设计、测试分层�
 !!! abstract "测验说明"
     本测验用于检验 CI/CD 自动化回归实战的学习效果。共 12 道选择题，覆盖流水线阶段、测试分层、触发策略、报告归档、失败诊断与质量门禁。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: CI/CD 自动化回归测验，检验流水线设计、测试分层�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="cicd-project">
 
 <div class="quiz-item" data-correct="2">
@@ -173,3 +176,5 @@ description: CI/CD 自动化回归测验，检验流水线设计、测试分层�
 - [持续集成测验](../持续集成/持续集成测验.md) - 补 Pipeline、Actions 与 Docker 基础
 - [接口自动化项目实战测验](接口自动化项目实战测验.md) - 准备可入流水线的自动化用例
 - [第5阶段-项目面试通关](../学习中心/第5阶段-项目面试通关.md) - 检查阶段达成情况
+
+:::

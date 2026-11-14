@@ -6,11 +6,13 @@ description: Git 基础测验，检验提交、分支、冲突解决与撤销回
 !!! abstract "测验说明"
     本测验用于检验 Git 版本控制教程的学习效果。共 12 道选择题，建议在学完教程后独立完成。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Git 基础测验，检验提交、分支、冲突解决与撤销回
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="git-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: Git 基础测验，检验提交、分支、冲突解决与撤销回
 - [Git 版本控制教程](Git版本控制教程-软件测试版.md) - 查看完整教程
 - [章节练习与参考答案](../章节练习与参考答案.md) - 更多工具练习
 - [Docker 基础测验](Docker基础测验.md) - 继续检验容器基础
+
+:::

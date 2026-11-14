@@ -6,11 +6,13 @@ description: Web 自动化项目实战测验，检验范围选择、页面对象
 !!! abstract "测验说明"
     本测验用于检验 Web 自动化项目实战的学习效果。共 12 道选择题，覆盖自动化范围选择、页面对象模型、元素定位、等待策略、失败截图与 CI 运行。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Web 自动化项目实战测验，检验范围选择、页面对象
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="web-auto-project">
 
 <div class="quiz-item" data-correct="1">
@@ -173,3 +176,5 @@ description: Web 自动化项目实战测验，检验范围选择、页面对象
 - [Playwright 基础测验](../自动化测试/Playwright基础测验.md) - 补自动等待与 Trace 基础
 - [接口自动化项目实战测验](接口自动化项目实战测验.md) - 把下单前置改用接口验证
 - [第5阶段-项目面试通关](../学习中心/第5阶段-项目面试通关.md) - 检查阶段达成情况
+
+:::

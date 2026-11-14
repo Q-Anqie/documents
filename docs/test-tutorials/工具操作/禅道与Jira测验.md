@@ -6,11 +6,13 @@ description: 禅道与 Jira 测验，检验缺陷流转、用例管理、严重�
 !!! abstract "测验说明"
     本测验用于检验禅道与 Jira 实战教程的学习效果。共 14 道选择题，覆盖缺陷要素、流转闭环、严重程度与优先级、解决结果分支、禅道对象模型、JQL 查询与质量度量指标。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📘 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 14 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: 禅道与 Jira 测验，检验缺陷流转、用例管理、严重�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="bug-tracking">
 
 <div class="quiz-item" data-correct="2">
@@ -195,3 +198,5 @@ description: 禅道与 Jira 测验，检验缺陷流转、用例管理、严重�
 - [缺陷报告模板](../模板库/缺陷报告模板.md) - 对照规范自查缺陷写法
 - [测试报告模板](../模板库/测试报告模板.md) - 把缺陷数据汇总成结论
 - [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) - 检查阶段通关情况
+
+:::

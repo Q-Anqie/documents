@@ -5,12 +5,14 @@ description: GitHub Actions 教程，矩阵测试、缓存和 Artifacts 管理�
 
 > 本教程面向软件测试工程师，讲解如何使用 GitHub Actions 搭建持续集成流水线，自动化执行测试、生成报告、通知团队。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-advanced">📕 高级难度</span>
     <span class="meta-item">⏱ 约 1.5 天</span>
     <span class="meta-item">📋 前置：Git 基础、自动化测试基础</span>
     <span class="meta-item">🎯 目标：使用 GitHub Actions 搭建自动化测试流水线</span>
 </div>
+:::
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|

@@ -6,11 +6,13 @@ description: TypeScript 基础教程，类型系统、接口、泛型和 Playwri
 !!! abstract "教程简介"
     本教程面向软件测试工程师，讲解 TypeScript 在测试工作中的应用：Playwright Node.js 版、测试框架、接口数据类型定义。在 JavaScript 基础上增加类型系统，让代码更安全、IDE 提示更智能。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 2 天</span>
     <span class="meta-item">🎯 目标：能读懂 TypeScript 测试代码，能编写带类型的测试脚本</span>
 </div>
+:::
 
 ---
 
@@ -690,6 +692,7 @@ function first<T>(arr: T[]): T { return arr[0] }
 
 ## 下一步建议
 
+::: v-pre
 <div class="tutorial-next-steps" markdown="1">
 
 ### 完成检查
@@ -891,6 +894,7 @@ async function checkOrderDetail(request: any, orderId: any) {
         }
       }
     }
+:::
     ```
 
     关键点：

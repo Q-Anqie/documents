@@ -6,11 +6,13 @@ description: Docker 基础测验，检验镜像、容器、Dockerfile、数据�
 !!! abstract "测验说明"
     本测验用于检验 Docker 容器教程的学习效果。共 12 道选择题，建议在学完教程后独立完成。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Docker 基础测验，检验镜像、容器、Dockerfile、数据�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="docker-basics">
 
 <div class="quiz-item" data-correct="2">
@@ -172,3 +175,5 @@ description: Docker 基础测验，检验镜像、容器、Dockerfile、数据�
 - [Docker 容器教程](Docker容器教程-软件测试版.md) - 查看完整教程
 - [章节练习与参考答案](../章节练习与参考答案.md) - 更多工具练习
 - [持续集成测验](../持续集成/持续集成测验.md) - 检验 CI/CD 中的容器应用
+
+:::

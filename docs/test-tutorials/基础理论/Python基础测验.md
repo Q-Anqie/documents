@@ -6,11 +6,13 @@ description: Python 基础测验，检验语法、数据类型和函数掌握程
 !!! abstract "测验说明"
     本测验用于检验 Python 基础教程的学习效果。共 10 道选择题，建议在学完教程后独立完成。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 15 分钟</span>
     <span class="meta-item">📝 10 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -22,6 +24,7 @@ description: Python 基础测验，检验语法、数据类型和函数掌握程
 
 ---
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="python-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -148,3 +151,5 @@ description: Python 基础测验，检验语法、数据类型和函数掌握程
 - [Python 基础教程](Python基础教程-软件测试版.md) - 查看完整教程
 - [章节练习与参考答案](../章节练习与参考答案.md) - 更多练习题
 - [学习路线](../学习路线.md) - 规划下一步学习
+
+:::

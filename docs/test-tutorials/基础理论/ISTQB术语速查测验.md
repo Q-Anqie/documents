@@ -6,11 +6,13 @@ description: ISTQB 术语速查测验，检验测试术语、测试级别、缺�
 !!! abstract "测验说明"
     本测验用于检验 ISTQB 软件测试术语速查的学习效果。共 12 道选择题，覆盖测试基础概念、测试级别与类型、测试设计技术、缺陷管理和敏捷 DevOps 术语。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: ISTQB 术语速查测验，检验测试术语、测试级别、缺�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="istqb-terms">
 
 <div class="quiz-item" data-correct="2">
@@ -172,3 +175,5 @@ description: ISTQB 术语速查测验，检验测试术语、测试级别、缺�
 - [ISTQB 术语速查](ISTQB软件测试术语速查.md) - 查看完整术语表
 - [软件测试理论基础测验](软件测试理论基础测验.md) - 检验测试流程与用例设计
 - [测试金字塔测验](测试金字塔测验.md) - 理解测试分层策略
+
+:::

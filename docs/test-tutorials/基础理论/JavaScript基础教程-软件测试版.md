@@ -6,11 +6,13 @@ description: JavaScript 基础教程，JS 语法、DOM、异步和 Postman 脚�
 !!! abstract "教程简介"
     本教程面向软件测试工程师，聚焦测试工作中需要的 JavaScript 基础知识：Postman Tests 脚本、Playwright 自动化、浏览器控制台调试、接口数据处理。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 3 天</span>
     <span class="meta-item">🎯 目标：能读懂和编写测试脚本中的 JavaScript 代码</span>
 </div>
+:::
 
 ---
 
@@ -1252,6 +1254,7 @@ str.split(",")           // 拆分
 
 ## 下一步建议
 
+::: v-pre
 <div class="tutorial-next-steps" markdown="1">
 
 ### 完成检查
@@ -1282,3 +1285,4 @@ str.split(",")           // 拆分
 完成本阶段后，使用 [第4阶段-自动化测试通关](../学习中心/第4阶段-自动化测试通关.md) 检查是否可以进入下一阶段。
 
 </div>
+:::

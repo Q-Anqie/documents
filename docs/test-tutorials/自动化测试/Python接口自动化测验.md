@@ -6,11 +6,13 @@ description: Python 接口自动化测验，检验 Requests、Pytest、分层设
 !!! abstract "测验说明"
     本测验用于检验 Python + Requests + Allure 接口自动化教程的学习效果。共 12 道选择题，覆盖请求发送、Pytest 框架、分层设计、配置管理和报告生成。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Python 接口自动化测验，检验 Requests、Pytest、分层设
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="python-api">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: Python 接口自动化测验，检验 Requests、Pytest、分层设
 - [Python 接口自动化教程](Python+Requests+Allure接口自动化教程-软件测试版.md) - 查看完整教程
 - [接口测试进阶测验](../专项测试/接口测试进阶测验.md) - 回看接口测试方法论
 - [接口自动化项目实战](../项目实战/接口自动化项目实战.md) - 把 Requests、Pytest、Allure 串成项目
+
+:::

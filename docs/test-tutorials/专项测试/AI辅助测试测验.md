@@ -6,11 +6,13 @@ description: AI 辅助测试测验，检验 AI 生成用例、视觉测试、Age
 !!! abstract "测验说明"
     本测验用于检验 AI 辅助测试教程的学习效果。共 16 道选择题，覆盖 AI 生成用例与数据、缺陷分析、视觉测试、Agent 测试、MCP 接入、OWASP LLM Top 10、Prompt 注入与自愈测试。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 25 分钟</span>
     <span class="meta-item">📝 16 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: AI 辅助测试测验，检验 AI 生成用例、视觉测试、Age
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="ai-testing">
 
 <div class="quiz-item" data-correct="2">
@@ -216,3 +219,5 @@ description: AI 辅助测试测验，检验 AI 生成用例、视觉测试、Age
 - [AI 辅助测试教程](AI辅助测试教程-软件测试版.md) - 查看完整教程
 - [Web 安全测试测验](Web安全测试测验.md) - 补对抗性测试的安全基础
 - [Playwright 基础测验](../自动化测试/Playwright基础测验.md) - 了解 AI 定位在自动化中的用法
+
+:::

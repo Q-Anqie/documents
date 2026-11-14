@@ -6,11 +6,13 @@ description: Playwright 基础测验，检验自动等待、定位和 Page Objec
 !!! abstract "测验说明"
     本测验用于检验 Playwright 自动化测试教程的学习效果。共 12 道选择题，覆盖元素定位、等待机制、Page Object、API 测试和 CI 集成。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Playwright 基础测验，检验自动等待、定位和 Page Objec
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="playwright-basics">
 
 <div class="quiz-item" data-correct="2">
@@ -172,3 +175,5 @@ description: Playwright 基础测验，检验自动等待、定位和 Page Objec
 - [Playwright 自动化测试教程](Playwright自动化测试教程-软件测试版.md) - 查看完整教程
 - [Web 自动化项目实战](../项目实战/Web自动化项目实战.md) - Playwright 项目实战
 - [Selenium Web 自动化教程](Selenium-Web自动化教程-软件测试版.md) - 对比学习 Selenium
+
+:::

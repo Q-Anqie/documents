@@ -6,11 +6,13 @@ description: JMeter 性能测试测验，检验线程组、参数化、关联和
 !!! abstract "测验说明"
     本测验用于检验 JMeter 性能测试教程的学习效果。共 12 道选择题，覆盖性能指标、线程组、参数化、关联和结果分析。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: JMeter 性能测试测验，检验线程组、参数化、关联和
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="jmeter-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: JMeter 性能测试测验，检验线程组、参数化、关联和
 - [JMeter 性能测试教程](JMeter性能测试教程-软件测试版.md) - 查看完整教程
 - [性能测试项目实战](../项目实战/性能测试项目实战.md) - 训练指标、场景和结果分析
 - [章节练习与参考答案](../章节练习与参考答案.md) - 性能与安全练习
+
+:::

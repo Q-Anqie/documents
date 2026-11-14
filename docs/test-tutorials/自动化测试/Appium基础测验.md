@@ -6,11 +6,13 @@ description: Appium 基础测验，检验 Capabilities、元素定位、上下�
 !!! abstract "测验说明"
     本测验用于检验 Appium App 自动化教程的学习效果。共 12 道选择题，覆盖环境与 Capabilities、元素定位、等待机制、上下文切换、高级操作和框架设计。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 25 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Appium 基础测验，检验 Capabilities、元素定位、上下�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="appium-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: Appium 基础测验，检验 Capabilities、元素定位、上下�
 - [Appium App 自动化教程](Appium-App自动化教程-软件测试版.md) - 查看完整教程
 - [Selenium 基础测验](Selenium基础测验.md) - 对比 Web 端自动化的异同
 - [移动端专项测试测验](../专项测试/移动端专项测试测验.md) - 补齐移动端专项能力
+
+:::

@@ -6,11 +6,13 @@ description: SQL 基础测验，检验增删改查和多表查询掌握程度。
 !!! abstract "测验说明"
     本测验用于检验 SQL 基础教程的学习效果。共 10 道选择题。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 10 道题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: SQL 基础测验，检验增删改查和多表查询掌握程度。
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="sql-basics">
 
 <div class="quiz-item" data-correct="2">
@@ -150,3 +153,5 @@ description: SQL 基础测验，检验增删改查和多表查询掌握程度。
 - [数据库 SQL 教程](数据库SQL教程-软件测试版.md) - 查看完整教程
 - [章节练习与参考答案](../章节练习与参考答案.md) - 更多 SQL 练习
 - [Redis 与 MongoDB 教程](Redis与MongoDB教程-软件测试版.md) - 扩展 NoSQL 知识
+
+:::

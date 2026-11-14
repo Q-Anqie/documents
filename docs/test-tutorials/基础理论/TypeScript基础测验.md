@@ -6,11 +6,13 @@ description: TypeScript 基础测验，检验类型系统、接口定义、泛�
 !!! abstract "测验说明"
     本测验用于检验 TypeScript 基础教程的学习效果。共 12 道选择题，覆盖基础类型、interface 与 type、函数类型、泛型、类型断言与接口响应建模。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: TypeScript 基础测验，检验类型系统、接口定义、泛�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="typescript-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: TypeScript 基础测验，检验类型系统、接口定义、泛�
 - [TypeScript 基础教程](TypeScript基础教程-软件测试版.md) - 查看完整教程
 - [JavaScript 基础测验](JavaScript基础测验.md) - 回补 JS 语法基础
 - [Playwright 基础测验](../自动化测试/Playwright基础测验.md) - 在真实框架中使用 TS
+
+:::

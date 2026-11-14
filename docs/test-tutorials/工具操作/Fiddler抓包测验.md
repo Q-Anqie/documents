@@ -6,11 +6,13 @@ description: Fiddler 抓包测验，检验代理原理、HTTPS 解密、Mock 与
 !!! abstract "测验说明"
     本测验用于检验 Fiddler 抓包教程的学习效果。共 12 道选择题，覆盖代理原理、HTTPS 解密、移动端抓包、Mock 与断点调试。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Fiddler 抓包测验，检验代理原理、HTTPS 解密、Mock 与
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="fiddler-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: Fiddler 抓包测验，检验代理原理、HTTPS 解密、Mock 与
 - [Fiddler 抓包教程](Fiddler抓包教程-软件测试版.md) - 查看完整教程
 - [Charles 抓包测验](Charles抓包测验.md) - 对比另一个抓包工具
 - [网络知识测验](网络知识测验.md) - 补 HTTP 协议与证书基础
+
+:::

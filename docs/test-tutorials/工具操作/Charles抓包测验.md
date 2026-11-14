@@ -6,11 +6,13 @@ description: Charles 抓包测验，检验 Map Local/Remote、Rewrite、弱网�
 !!! abstract "测验说明"
     本测验用于检验 Charles 抓包教程的学习效果。共 12 道选择题，覆盖 Mock 与转发、请求改写、弱网模拟、重放和移动端抓包。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Charles 抓包测验，检验 Map Local/Remote、Rewrite、弱网�
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="charles-basics">
 
 <div class="quiz-item" data-correct="2">
@@ -172,3 +175,5 @@ description: Charles 抓包测验，检验 Map Local/Remote、Rewrite、弱网�
 - [Charles 抓包教程](Charles抓包教程-软件测试版.md) - 查看完整教程
 - [Fiddler 抓包测验](Fiddler抓包测验.md) - 对比另一个抓包工具
 - [接口抓包联调实战教程](接口抓包联调实战教程-软件测试版.md) - 把抓包用到真实联调
+
+:::

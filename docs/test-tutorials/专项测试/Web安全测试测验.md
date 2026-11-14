@@ -6,11 +6,13 @@ description: Web 安全测试测验，检验 OWASP Top 10、注入、XSS、CSRF 
 !!! abstract "测验说明"
     本测验用于检验 Web 安全测试教程的学习效果。共 12 道选择题，覆盖 OWASP Top 10、SQL 注入、XSS、CSRF、越权与敏感信息泄露。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-intermediate">📙 中级难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Web 安全测试测验，检验 OWASP Top 10、注入、XSS、CSRF 
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="security-basics">
 
 <div class="quiz-item" data-correct="2">
@@ -172,3 +175,5 @@ description: Web 安全测试测验，检验 OWASP Top 10、注入、XSS、CSRF 
 - [Web 安全测试教程](Web安全测试教程-软件测试版.md) - 查看完整教程
 - [安全测试案例](../案例库/安全测试案例-软件测试版.md) - 案例库中的安全测试案例
 - [安全测试面试题](../面试专题/安全测试面试题.md) - 检验面试表达
+
+:::

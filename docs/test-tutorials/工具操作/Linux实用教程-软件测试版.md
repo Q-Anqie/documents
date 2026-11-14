@@ -2533,6 +2533,7 @@ Jun  7 03:15:41 web01 sshd[2180]: Accepted password for testuser from 192.168.1.
 
 ## 下一步建议
 
+::: v-pre
 <div class="tutorial-next-steps" markdown="1">
 
 ### 完成检查
@@ -2563,3 +2564,4 @@ Jun  7 03:15:41 web01 sshd[2180]: Accepted password for testuser from 192.168.1.
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
 </div>
+:::

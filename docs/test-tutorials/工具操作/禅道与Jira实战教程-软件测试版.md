@@ -5,12 +5,14 @@ description: 禅道与 Jira 实战教程，覆盖缺陷提交与流转、用例�
 
 > 本教程面向软件测试工程师，系统讲解国内最主流的两个研发管理平台：**禅道（ZenTao）** 和 **Jira**。覆盖缺陷全生命周期流转、测试用例管理、需求与迭代管理、JQL 查询、Git 集成与质量度量，并给出面试现场演示的完整操作路径。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📘 入门难度</span>
     <span class="meta-item">⏱ 约 2 天</span>
     <span class="meta-item">📋 前置：软件测试基础、缺陷报告写作</span>
     <span class="meta-item">🎯 目标：能独立在禅道/Jira 中完成用例执行与缺陷闭环</span>
 </div>
+:::
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|

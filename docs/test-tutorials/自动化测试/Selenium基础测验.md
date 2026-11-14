@@ -6,11 +6,13 @@ description: Selenium 基础测验，检验元素定位、等待机制和 Page O
 !!! abstract "测验说明"
     本测验用于检验 Selenium Web 自动化教程的学习效果。共 12 道选择题，覆盖元素定位、等待机制、窗口与 iframe、Page Object 和框架设计。
 
+::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
+:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -24,6 +26,7 @@ description: Selenium 基础测验，检验元素定位、等待机制和 Page O
 
 ## 选择题
 
+::: v-pre
 <div class="quiz-container" data-quiz-id="selenium-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -172,3 +175,5 @@ description: Selenium 基础测验，检验元素定位、等待机制和 Page O
 - [Selenium Web 自动化教程](Selenium-Web自动化教程-软件测试版.md) - 查看完整教程
 - [Playwright 基础测验](Playwright基础测验.md) - 对比另一个 Web 自动化框架
 - [Web 自动化项目实战](../项目实战/Web自动化项目实战.md) - 把定位和等待用到真实项目
+
+:::
