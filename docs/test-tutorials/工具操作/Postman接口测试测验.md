@@ -6,13 +6,11 @@ description: Postman 接口测试测验，检验请求构造、变量作用域�
 !!! abstract "测验说明"
     本测验用于检验 Postman 接口测试教程的学习效果。共 12 道选择题，覆盖请求构造、变量管理、Tests 断言、数据驱动与 Newman。
 
-::: v-pre
 <div class="tutorial-meta">
     <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
     <span class="meta-item">⏱ 约 20 分钟</span>
     <span class="meta-item">📝 12 道选择题</span>
 </div>
-:::
 
 !!! tip "测验反馈"
     提交答案后，系统会显示：
@@ -26,7 +24,6 @@ description: Postman 接口测试测验，检验请求构造、变量作用域�
 
 ## 选择题
 
-::: v-pre
 <div class="quiz-container" data-quiz-id="postman-basics">
 
 <div class="quiz-item" data-correct="1">
@@ -89,7 +86,7 @@ description: Postman 接口测试测验，检验请求构造、变量作用域�
 <div class="quiz-options">
 <label class="quiz-option"><input type="radio" name="q6" value="0"> 每次手工复制粘贴到请求头里</label>
 <label class="quiz-option"><input type="radio" name="q6" value="1"> 在 Params 里直接写死 token</label>
-<label class="quiz-option"><input type="radio" name="q6" value="2"> 在登录的 Tests 里把响应中的 token 写入环境变量，后续请求用 {{token}} 引用</label>
+<label class="quiz-option"><input type="radio" name="q6" value="2"> 在登录的 Tests 里把响应中的 token 写入环境变量，后续请求用 \{\{token\}\} 引用</label>
 <label class="quiz-option"><input type="radio" name="q6" value="3"> 把 token 写进 Pre-request Script 的注释里</label>
 </div>
 <div class="quiz-explanation">💡 在 Tests 中用 `pm.environment.set("token", ...)` 提取并保存，后续请求通过 `{{token}}` 引用。这样才能在 Collection Runner 里连续跑通"登录 → 查订单"这类有依赖的流程</div>
@@ -175,5 +172,3 @@ description: Postman 接口测试测验，检验请求构造、变量作用域�
 - [Postman 接口测试教程](Postman接口测试教程-软件测试版.md) - 查看完整教程
 - [接口测试基础测验](../专项测试/接口测试基础测验.md) - 检验接口测试方法论
 - [章节练习与参考答案](../章节练习与参考答案.md) - 更多接口练习
-
-:::
