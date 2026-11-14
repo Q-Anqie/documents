@@ -69,7 +69,6 @@ assert "home" in driver.current_url
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-
 driver.get("https://test.example.com/login")
 driver.find_element(By.NAME, "username").send_keys("test")   # (1)
 driver.find_element(By.NAME, "password").send_keys("123456")

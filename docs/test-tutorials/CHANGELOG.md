@@ -100,7 +100,7 @@ description: 软件测试知识体系站点更新日志和版本记录。
   2. **不能依赖 `runPython` 的返回值取 `print` 输出**——Pyodide 里 `print()` 的返回值是 `undefined`（写到 stdout 而非返回值），实测确认；必须用 `py.setStdout({batched})` 捕获。判分结果用 `__CODELAB__` 标记行定位，避免被学生代码自身的 `print` 干扰。
   另外 `indexURL` 必须指向本地 `vendor/pyodide/`，否则会自动去 CDN 取 wasm；实测加载全程 **0 次 CDN 请求**。
 - **教程数口径全面对齐实际文件数**：此前首页与 README 的计数严重失真——首页标题写"90+"但同页明细表实为 117 且漏了「学习中心」整类；README 九个分区里有五个（基础理论 12→20、工具操作 14→22、专项测试 8→13、自动化测试 5→8、项目实战 6→11）停留在补充测验之前。现按实际文件数逐项校准（当时为 **126 篇**，新增「练习总览」后为 **127 篇**；口径为排除 `404.md` 与 `CHANGELOG.md`）：首页明细表补齐「首页」「学习中心」两行并注明元页面不计入，README 补「学习中心」小节并逐节对齐，`CLAUDE.md` 写明口径与约定。另新增 `_check_counts.py` 把口径变成可自动校验的断言（逐分区比对首页/README 与真实文件数，不一致即非零退出），杜绝同类漂移再次发生——本次新增页面时该门禁确实拦住了未同步的四处口径，验证了它的有效性
-- **Mermaid 围栏类名避开内置自动扫描**：mermaid 11 在 `window load` 时会自动执行 `run({querySelector: ".mermaid"})`，而 `extra_javascript` 注入在 `</body>` 前、库为懒加载，自动扫描必然先于自定义渲染执行；结果是 ` ```mermaid ` 生成的 `<pre class="mermaid">` 被抢先把源码清空成空 `<div>`，图表全部不显示。改法：`pymdownx.superfences.custom_fences` 的 `class` 用 `mermaid-src`，让内置选择器失配，再由 `mermaid.js` 自行渲染进 `.mermaid` 容器
+- **Mermaid 围栏类名避开内置自动扫描**：mermaid 11 在 `window load` 时会自动执行 `run({querySelector: ".mermaid"})`，而 `extra_javascript` 注入在 `</body>` 前、库为懒加载，自动扫描必然先于自定义渲染执行；结果是 ` ```mermaid ` 生成的 `` 被抢先把源码清空成空 ``，图表全部不显示。改法：`pymdownx.superfences.custom_fences` 的 `class` 用 `mermaid-src`，让内置选择器失配，再由 `mermaid.js` 自行渲染进 `.mermaid` 容器
 - 修正 3 处指向错误测验的链接：软件测试理论基础教程误指 Python 基础测验、网络知识教程误指 Linux/SQL 基础测验、Selenium 教程误指 Playwright 基础测验
 - 修正学习路线第 1 阶段"阶段测验"指向 Python 基础测验的问题（Python 基础属第 4 阶段教程）
 - 修正 JavaScript 基础测验中指向不存在页面的链接（前端基础测验 → 前端基础教程）

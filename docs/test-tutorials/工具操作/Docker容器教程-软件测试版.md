@@ -345,9 +345,9 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 | 参数 | 含义 |
 |------|------|
 | `--format` | 自定义输出格式 |
-| `{{.Names}}` | 容器名称 |
-| `{{.Status}}` | 运行状态 |
-| `{{.Ports}}` | 端口映射 |
+| `&#123;&#123;.Names&#125;&#125;` | 容器名称 |
+| `&#123;&#123;.Status&#125;&#125;` | 运行状态 |
+| `&#123;&#123;.Ports&#125;&#125;` | 端口映射 |
 | `\t` | 制表符（列对齐） |
 
 ### 4.3 启动/停止/重启
@@ -1598,7 +1598,7 @@ docker compose logs app
     docker compose ps
     docker network ls
     # 查看 app 容器所在网络（compose 会创建一个 <目录名>_default 网络）
-    docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' $(docker compose ps -q app)
+    docker inspect -f '&#123;&#123;range $k,$v := .NetworkSettings.Networks&#125;&#125;&#123;&#123;$k&#125;&#125;&#123;&#123;end&#125;&#125;' $(docker compose ps -q app)
     ```
 
     预期：两个容器都 `Up`，且网络名相同（如 `demo_default`）。
@@ -1677,9 +1677,6 @@ docker compose logs app
 
 ## 下一步建议
 
-::: v-pre
-<div class="tutorial-next-steps" markdown="1">
-
 ### 完成检查
 
 学完本教程后，检查自己是否能做到：
@@ -1708,5 +1705,3 @@ docker compose logs app
 
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
-</div>
-:::

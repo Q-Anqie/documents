@@ -44,7 +44,7 @@ Postman 是接口测试入门最重要的工具之一。新手第一遍不要急
 
 | 场景 | 新手常见写法 | 推荐写法 | 原因 |
 |------|--------------|----------|------|
-| 环境地址 | 每个请求都写完整 URL | 使用 `{{base_url}}` 环境变量 | 切换环境方便，减少重复修改 |
+| 环境地址 | 每个请求都写完整 URL | 使用 `&#123;&#123;base_url&#125;&#125;` 环境变量 | 切换环境方便，减少重复修改 |
 | 登录 token | 手工复制 token 到 Header | 登录接口 Tests 自动保存 token | 避免 token 过期后整套接口失败 |
 | 断言 | 只看 Status 200 | 同时断言 HTTP 状态码、业务码、关键字段 | 很多业务失败也会返回 200 |
 | 密码和 token | 写在请求或脚本里并截图分享 | 使用 secret 变量，日志脱敏 | 避免敏感信息泄露 |
@@ -196,7 +196,7 @@ Postman 是一款功能强大的 **API 开发与测试平台**，最初是 Chrom
 | 控件 | 是什么 | 新手容易踩的点 |
 |------|--------|----------------|
 | 请求方法下拉框 | GET / POST / PUT / PATCH / DELETE / HEAD / OPTIONS | **方法选错返回 405，不是 404**，别急着报「接口不存在」 |
-| URL 输入框 | 请求地址，支持 `{{base_url}}/api/login` | 变量名写错（如 `{{Base_Url}}`）不会报错，**原样发出去** |
+| URL 输入框 | 请求地址，支持 `&#123;&#123;base_url&#125;&#125;/api/login` | 变量名写错（如 `&#123;&#123;Base_Url&#125;&#125;`）不会报错，**原样发出去** |
 | `Send` 按钮 | 发送请求 | 下拉还有 `Send and Download`，只在测文件下载时用 |
 | `Save` 按钮 | 存进 Collection | 不 Save 的请求，关掉标签页就没了 |
 | `Params` | URL 查询参数，与 URL 输入框**双向同步** | 在 URL 手写 `?a=1` 和在 Params 表格填，是同一份数据 |
@@ -208,9 +208,9 @@ Postman 是一款功能强大的 **API 开发与测试平台**，最初是 Chrom
     URL 输入框右侧、环境选择器旁边有一个小圆点：
 
     - **绿色**：当前环境变量全部解析成功
-    - **橙色 / 红色**：有 `{{...}}` 变量没找到值
+    - **橙色 / 红色**：有 `&#123;&#123;...&#125;&#125;` 变量没找到值
 
-    **看到非绿色就先别点 Send**。否则你会拿字面量 `{{token}}` 去请求，
+    **看到非绿色就先别点 Send**。否则你会拿字面量 `&#123;&#123;token&#125;&#125;` 去请求，
     然后花半小时疑惑为什么一直 401。
 
     > 自查方法：点开圆点会列出「哪些变量未解析」。
@@ -535,7 +535,7 @@ Global（全局） < Collection（集合） < Environment（环境） < Data（�
 
 **Step 3：使用变量**
 
-在 URL、Headers、Body 中使用 `{{变量名}}` 语法：
+在 URL、Headers、Body 中使用 `&#123;&#123;变量名&#125;&#125;` 语法：
 
 ```
 URL:  {{base_url}}/api/login
@@ -799,7 +799,7 @@ const timestamp = new Date().getTime();
 pm.environment.set("timestamp", timestamp);
 ```
 
-请求 Body 中使用：`{"time": "{{timestamp}}"}`
+请求 Body 中使用：`{"time": "&#123;&#123;timestamp&#125;&#125;"}`
 
 #### 9.2.2 生成 UUID
 
@@ -1180,7 +1180,7 @@ Collection Runner 按顺序执行，可验证整条业务链路。
 | 无权限 | 用普通用户访问管理接口 | 返回 403 |
 | 重复提交 | 短时间内发送 2 次相同请求 | 第 2 次应被拦截 |
 | SQL 注入 | 输入 `' OR '1'='1` | 应被拦截或转义 |
-| XSS 攻击 | 输入 `<script>alert(1)</script>` | 应被过滤 |
+| XSS 攻击 | 输入 `` | 应被过滤 |
 
 每个用例独立保存为请求，配合数据驱动，可一次性运行所有异常场景。
 
@@ -1273,15 +1273,15 @@ Postman 提供 fork/merge 功能：
 |------|------|----------|
 | URL 真的拼错了 | 路径里可能有重复 `/` 或少了 `/api` | Console 里看完整 URL |
 | **方法错了**（如该 POST 写成 GET） | 有些框架对方法不匹配返回 404 而非 405 | 换方法再发一次 |
-| **变量没解析**，变成了字面量 | URL 里能直接看到 `{{base_url}}` 字样 | 看 URL 旁圆点颜色 |
+| **变量没解析**，变成了字面量 | URL 里能直接看到 `&#123;&#123;base_url&#125;&#125;` 字样 | 看 URL 旁圆点颜色 |
 
 !!! danger "最隐蔽的一种：「环境没选」导致请求发到错的地方"
-    如果你有「开发/测试」两个环境，**忘了选环境**时 `{{base_url}}` 不会被替换。
-    Postman 会把 `{{base_url}}/api/users` **原样**发出去，
+    如果你有「开发/测试」两个环境，**忘了选环境**时 `&#123;&#123;base_url&#125;&#125;` 不会被替换。
+    Postman 会把 `&#123;&#123;base_url&#125;&#125;/api/users` **原样**发出去，
     有些网关会把它路由到一个 404 页面——**看起来像接口不存在**。
 
     **确认方法**：Console 里看 `GET` 后面那串。
-    如果里面还有 `{{` 和 `}}`，问题就在变量，不在接口。
+    如果里面还有 `&#123;&#123;` 和 `&#125;&#125;`，问题就在变量，不在接口。
 
 ### 15.3 变量没有生效
 
@@ -1291,7 +1291,7 @@ Postman 提供 fork/merge 功能：
 
 1. **看 URL 旁的圆点颜色**——橙色/红色就是有变量没解析，点开能看到是哪个
 2. **确认选中了环境**（右上角下拉框），很多人建了环境但没激活
-3. **变量名大小写完全一致**——`{{base_url}}` ≠ `{{BASE_URL}}`，Postman 不报错，直接原样发
+3. **变量名大小写完全一致**——`&#123;&#123;base_url&#125;&#125;` ≠ `&#123;&#123;BASE_URL&#125;&#125;`，Postman 不报错，直接原样发
 4. **`Current Value` 有值吗**——只填了 `Initial Value` 时，本地实际生效的是空
 5. **作用域被覆盖了吗**——同名变量优先级：`Local > Data > Environment > Collection > Global`
 
@@ -1304,7 +1304,7 @@ Postman 提供 fork/merge 功能：
     ```
 
     如果打印出 `undefined`，说明变量压根不存在；
-    如果打印出 `{{base_url}}` 字面量，说明是**作用域没激活**。
+    如果打印出 `&#123;&#123;base_url&#125;&#125;` 字面量，说明是**作用域没激活**。
 
     ⚠️ **永远不要 `console.log` 完整 Token**——截图分享时最容易泄露。
 
@@ -1590,8 +1590,6 @@ SSL Error: Unable to verify the first certificate
 
 ## 下一步建议
 
-<div class="tutorial-next-steps" markdown="1">
-
 ### 完成检查
 
 学完本教程后，检查自己是否能做到：
@@ -1606,48 +1604,6 @@ SSL Error: Unable to verify the first certificate
 ### 在线自测 { #sec-lab }
 
 上面的四层断言是思路，这道题把它变成可运行的校验器：解析响应、校验金额与明细一致、扫描敏感字段。典型错误答案（只看状态码、金额写死）会被判分拦住。
-
-<div class="code-lab" data-lab-id="api-assertion-tiers"></div>
-
-<script type="application/json" class="code-lab-spec">
-{
-  "title": "写一个会抓缺陷的响应校验器（而不是只看状态码）",
-  "prelude": "import json\n\n# 一次「订单查询」接口的正常响应（字符串形式，模拟收到的原始响应体）\nGOOD_BODY = json.dumps({\n    'code': 0,\n    'message': 'success',\n    'data': {\n        'orderId': 'ORD-20260901-0001',\n        'status': 'paid',\n        'amount': 1299.00,\n        'items': [\n            {'productId': 101, 'name': 'monitor', 'quantity': 1, 'price': 1299.00}\n        ],\n        'createdAt': '2026-09-01T10:00:03+08:00',\n    },\n}, ensure_ascii=False)\n\n# 敏感字段词表：判分时在 prelude 里给出，避免各人自造词表导致误判\nSENSITIVE = ('password', 'idCard', 'id_card', 'mobile', 'phone', 'token')\n",
-  "starterCode": "# SENSITIVE 已在上方给出，直接使用即可\n\n\ndef parse(body_text, status_code):\n    \"\"\"任务 1（协议层）：把响应体解析成 dict。\n\n    返回 (ok: bool, data_or_none):\n      - status_code 不是 200        -> (False, None)\n      - 响应体不是合法 JSON          -> (False, None)\n      - 响应体是合法 JSON 但不是对象  -> (False, None)\n      - 其他情况                    -> (True, dict)\n    \"\"\"\n    # TODO: 在这里实现\n    pass\n\n\ndef check_amount(data):\n    \"\"\"任务 2（数据层）：校验 amount 与 items 明细累加一致。\n\n    累加规则：sum(item['price'] * item['quantity'] for item in data['items'])\n    返回 bool。金额比较请容忍 1 分钱以内的浮点误差（< 0.005）。\n    data 缺少 items 或 items 为空时返回 False（空订单不该出现在这个接口里）。\n    \"\"\"\n    # TODO: 在这里实现\n    pass\n\n\ndef find_sensitive(body_text):\n    \"\"\"任务 3（安全层）：返回响应体里出现的敏感字段名列表（小写，去重，按字母序）。\n\n    判定：只要响应原文里（不区分大小写）出现了 SENSITIVE 里的某个词，就算命中。\n    没命中返回空列表 []。\n    \"\"\"\n    # TODO: 在这里实现\n    pass\n",
-  "tests": [
-    {
-      "name": "任务 1：正常响应解析成功",
-      "code": "ok, d = parse(GOOD_BODY, 200)\nassert ok is True, f'正常响应应返回 True，实际 {ok}'\nassert isinstance(d, dict) and d.get('code') == 0, f'应解析出 dict 且 code 为 0，实际 {d}'",
-      "hint": "用 json.loads()，并用 try/except json.JSONDecodeError 兜住非法 JSON"
-    },
-    {
-      "name": "任务 1：非 200、非 JSON、JSON 但不是对象都要判失败",
-      "code": "assert parse(GOOD_BODY, 500)[0] is False, '状态码 500 应判失败'\nassert parse('<html>502 Bad Gateway</html>', 200)[0] is False, 'HTML 响应体应判失败'\nassert parse('[1, 2, 3]', 200)[0] is False, 'JSON 数组不是对象，应判失败'\nassert parse('<html>', 200)[1] is None, '失败时应返回 None 作为数据'\nassert parse('{\"code\": 0}', 200)[1] == {'code': 0}, '合法 JSON 对象应作为第二项返回'",
-      "hint": "注意这四种情况的返回第二项都应是 None，不要抛异常"
-    },
-    {
-      "name": "任务 2：金额与明细一致时通过",
-      "code": "ok, d = parse(GOOD_BODY, 200)\nassert ok is True, f'正常响应应解析成功，实际 ok={ok}'\nassert check_amount(d['data']) is True, f\"1299.00 应与 1 件 1299.00 一致，data={d.get('data') if d else None}\"\ntwo = {'amount': 798.00, 'items': [\n    {'price': 399.00, 'quantity': 2}]}\nassert check_amount(two) is True, '798.00 应与 2 件 399.00 一致'",
-      "hint": "sum(item['price'] * item['quantity']) 再和 data['amount'] 比"
-    },
-    {
-      "name": "任务 2：开发改了折扣却没改 amount 时必须报错",
-      "code": "import copy\nbad = copy.deepcopy(dict(code=0, data={'amount': 9999.00,\n      'items': [{'productId': 101, 'name': 'monitor', 'quantity': 1, 'price': 1299.00}]}))\nassert check_amount(bad['data']) is False, 'amount=9999 与明细 1299 不一致，应返回 False'\nassert check_amount({'amount': 100, 'items': []}) is False, '空 items 应返回 False'",
-      "hint": "这是这道题的重点：只断言状态码的测试，永远发现不了这一类缺陷"
-    },
-    {
-      "name": "任务 3：正常响应不含敏感字段",
-      "code": "assert find_sensitive(GOOD_BODY) == [], f'正常响应不应命中敏感字段，实际 {find_sensitive(GOOD_BODY)}'",
-      "hint": "注意 GOOD_BODY 里有 productId、createdAt，别把它们误判成敏感字段"
-    },
-    {
-      "name": "任务 3：大小写混写也要抓到",
-      "code": "leak = '{\"data\": {\"userPassword\": \"x\", \"Mobile\": \"138\"\}\}'\nr = find_sensitive(leak)\nassert r == ['mobile', 'password'], f\"应命中 ['mobile', 'password']，实际 {r}\"",
-      "hint": "先把响应体整体 lower()，再逐个子串检查；返回的是 SENSITIVE 里的标准写法"
-    }
-  ]
-}
-</script>
 
 做完点「检查答案」，每题都会给出具体提示。全对之后，本页会在学习进度里
 自动标记为已通过（进度存在浏览器本地，换设备不会同步）。
@@ -1670,4 +1626,3 @@ SSL Error: Unable to verify the first certificate
 
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
-</div>

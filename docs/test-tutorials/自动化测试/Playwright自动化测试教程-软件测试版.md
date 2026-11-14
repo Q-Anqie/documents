@@ -67,7 +67,6 @@ assert "home" in page.url
 ```python
 from playwright.sync_api import expect
 
-
 def test_login_success(page):
     page.goto("https://test.example.com/login")
     page.get_by_label("用户名").fill("test")          # (1)

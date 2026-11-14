@@ -5,14 +5,10 @@ description: Python 接口自动化教程，Requests + Pytest + Allure 框架搭
 
 > 本教程面向软件测试工程师，系统讲解基于 Python 技术栈搭建接口自动化测试框架，覆盖从环境搭建、用例编写、数据驱动到 Allure 报告生成、CI/CD 集成的完整流程。
 
-::: v-pre
-<div class="tutorial-meta">
-    <span class="difficulty-badge difficulty-intermediate">📙 进阶难度</span>
-    <span class="meta-item">⏱ 约 5 天</span>
-    <span class="meta-item">📋 前置：Python 基础、接口测试基础</span>
-    <span class="meta-item">🎯 目标：搭建完整的接口自动化测试框架</span>
-</div>
-:::
+    📙 进阶难度
+    ⏱ 约 5 天
+    📋 前置：Python 基础、接口测试基础
+    🎯 目标：搭建完整的接口自动化测试框架
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|
@@ -2876,9 +2872,6 @@ def test_cancel_order():
 
 ## 下一步建议
 
-::: v-pre
-<div class="tutorial-next-steps" markdown="1">
-
 ### 完成检查
 
 学完本教程后，检查自己是否能做到：
@@ -2906,5 +2899,3 @@ def test_cancel_order():
 
 完成本阶段后，使用 [第4阶段-自动化测试通关](../学习中心/第4阶段-自动化测试通关.md) 检查是否可以进入下一阶段。
 
-</div>
-:::

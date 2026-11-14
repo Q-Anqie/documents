@@ -27,7 +27,7 @@ features:
     link: /docs/devjava-zh/01-变量与数据类型
     linkText: 查看
   - title: 软件测试知识体系
-    details: 137 篇系统化教程，覆盖测试入门、工具实战、专项测试、自动化测试、项目实战与面试准备完整技能栈。
+    details: 137 篇系统化教程，覆盖测试入门、工具实战、专项测试、自动化测试、项目实战与面试准备。
     link: /docs/test-tutorials/
     linkText: 查看
   - title: 术语表

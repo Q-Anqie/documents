@@ -5,7 +5,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: "安且文档库",
   titleTemplate: ":title 👉 Anqie's Documents",
-  description: "个人文档仓库：NeoForge 1.21.1 中文文档、模组开发教程、Java 笔记",
+  description: "个人文档仓库：NeoForge 中文文档、模组开发教程、Java 笔记、软件测试知识体系",
   base: "/documents/",
   cleanUrls: true,
   lastUpdated: true,
@@ -15,13 +15,12 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#4f46e5' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: '安且文档库 · 个人文档仓库' }],
-    ['meta', { property: 'og:description', content: '个人文档仓库：NeoForge 1.21.1 中文文档、模组开发教程、Java 笔记' }]
+    ['meta', { property: 'og:description', content: '个人文档仓库：NeoForge 中文文档、模组开发教程、Java 笔记、软件测试知识体系' }]
   ],
 
   markdown: {
     theme: { light: 'github-light', dark: 'github-dark' },
-    lineNumbers: false,
-    html: false
+    lineNumbers: false
   },
 
   themeConfig: {
@@ -787,6 +786,630 @@ export default defineConfig({
           text: '类与对象深入',
           items: [
             { text: '类与对象深入', link: '/docs/devjava-zh/模块十七-类与对象深入/01-类与对象深入' },
+          ]
+        }
+      ],
+      '/docs/test-tutorials/': [
+        {
+          text: '总览与学习路径',
+          collapsed: false,
+          items: [
+            {
+              text: 'CHANGELOG',
+              link: '/docs/test-tutorials/CHANGELOG'
+            },
+            {
+              text: '学习中心',
+              link: '/docs/test-tutorials/学习中心'
+            },
+            {
+              text: '学习路线',
+              link: '/docs/test-tutorials/学习路线'
+            },
+            {
+              text: '学习验收与通关路径',
+              link: '/docs/test-tutorials/学习验收与通关路径'
+            },
+            {
+              text: '工具选型指南',
+              link: '/docs/test-tutorials/工具选型指南'
+            },
+            {
+              text: '章节练习与参考答案',
+              link: '/docs/test-tutorials/章节练习与参考答案'
+            },
+            {
+              text: '练习总览',
+              link: '/docs/test-tutorials/练习总览'
+            },
+            {
+              text: '阶段学习检查清单',
+              link: '/docs/test-tutorials/阶段学习检查清单'
+            }
+          ]
+        },
+        {
+          text: '01 · 学习中心',
+          collapsed: false,
+          items: [
+            {
+              text: '在线编程练习场',
+              link: '/docs/test-tutorials/学习中心/在线编程练习场'
+            },
+            {
+              text: '学习进度说明',
+              link: '/docs/test-tutorials/学习中心/学习进度说明'
+            },
+            {
+              text: '第1阶段-测试入门通关',
+              link: '/docs/test-tutorials/学习中心/第1阶段-测试入门通关'
+            },
+            {
+              text: '第2阶段-工具实战通关',
+              link: '/docs/test-tutorials/学习中心/第2阶段-工具实战通关'
+            },
+            {
+              text: '第3阶段-专项测试通关',
+              link: '/docs/test-tutorials/学习中心/第3阶段-专项测试通关'
+            },
+            {
+              text: '第4阶段-自动化测试通关',
+              link: '/docs/test-tutorials/学习中心/第4阶段-自动化测试通关'
+            },
+            {
+              text: '第5阶段-项目面试通关',
+              link: '/docs/test-tutorials/学习中心/第5阶段-项目面试通关'
+            }
+          ]
+        },
+        {
+          text: '02 · 基础理论',
+          collapsed: false,
+          items: [
+            {
+              text: 'ISTQB术语速查测验',
+              link: '/docs/test-tutorials/基础理论/ISTQB术语速查测验'
+            },
+            {
+              text: 'ISTQB软件测试术语速查',
+              link: '/docs/test-tutorials/基础理论/ISTQB软件测试术语速查'
+            },
+            {
+              text: 'JavaScript基础教程',
+              link: '/docs/test-tutorials/基础理论/JavaScript基础教程-软件测试版'
+            },
+            {
+              text: 'JavaScript基础测验',
+              link: '/docs/test-tutorials/基础理论/JavaScript基础测验'
+            },
+            {
+              text: 'Python基础教程',
+              link: '/docs/test-tutorials/基础理论/Python基础教程-软件测试版'
+            },
+            {
+              text: 'Python基础测验',
+              link: '/docs/test-tutorials/基础理论/Python基础测验'
+            },
+            {
+              text: 'TypeScript基础教程',
+              link: '/docs/test-tutorials/基础理论/TypeScript基础教程-软件测试版'
+            },
+            {
+              text: 'TypeScript基础测验',
+              link: '/docs/test-tutorials/基础理论/TypeScript基础测验'
+            },
+            {
+              text: '前端基础教程',
+              link: '/docs/test-tutorials/基础理论/前端基础教程-软件测试版'
+            },
+            {
+              text: '前端基础测验',
+              link: '/docs/test-tutorials/基础理论/前端基础测验'
+            },
+            {
+              text: '探索式测试教程',
+              link: '/docs/test-tutorials/基础理论/探索式测试教程-软件测试版'
+            },
+            {
+              text: '探索式测试测验',
+              link: '/docs/test-tutorials/基础理论/探索式测试测验'
+            },
+            {
+              text: '敏捷测试教程',
+              link: '/docs/test-tutorials/基础理论/敏捷测试教程-软件测试版'
+            },
+            {
+              text: '敏捷测试测验',
+              link: '/docs/test-tutorials/基础理论/敏捷测试测验'
+            },
+            {
+              text: '测试用例设计方法论教程',
+              link: '/docs/test-tutorials/基础理论/测试用例设计方法论教程-软件测试版'
+            },
+            {
+              text: '测试用例设计测验',
+              link: '/docs/test-tutorials/基础理论/测试用例设计测验'
+            },
+            {
+              text: '测试金字塔与自动化分层策略',
+              link: '/docs/test-tutorials/基础理论/测试金字塔与自动化分层策略'
+            },
+            {
+              text: '测试金字塔测验',
+              link: '/docs/test-tutorials/基础理论/测试金字塔测验'
+            },
+            {
+              text: '软件测试理论基础教程',
+              link: '/docs/test-tutorials/基础理论/软件测试理论基础教程'
+            },
+            {
+              text: '软件测试理论基础测验',
+              link: '/docs/test-tutorials/基础理论/软件测试理论基础测验'
+            }
+          ]
+        },
+        {
+          text: '03 · 工具操作',
+          collapsed: false,
+          items: [
+            {
+              text: 'Charles抓包教程',
+              link: '/docs/test-tutorials/工具操作/Charles抓包教程-软件测试版'
+            },
+            {
+              text: 'Charles抓包测验',
+              link: '/docs/test-tutorials/工具操作/Charles抓包测验'
+            },
+            {
+              text: 'Docker基础测验',
+              link: '/docs/test-tutorials/工具操作/Docker基础测验'
+            },
+            {
+              text: 'Docker容器教程',
+              link: '/docs/test-tutorials/工具操作/Docker容器教程-软件测试版'
+            },
+            {
+              text: 'Fiddler抓包教程',
+              link: '/docs/test-tutorials/工具操作/Fiddler抓包教程-软件测试版'
+            },
+            {
+              text: 'Fiddler抓包测验',
+              link: '/docs/test-tutorials/工具操作/Fiddler抓包测验'
+            },
+            {
+              text: 'Git基础测验',
+              link: '/docs/test-tutorials/工具操作/Git基础测验'
+            },
+            {
+              text: 'Git版本控制教程',
+              link: '/docs/test-tutorials/工具操作/Git版本控制教程-软件测试版'
+            },
+            {
+              text: 'Linux基础测验',
+              link: '/docs/test-tutorials/工具操作/Linux基础测验'
+            },
+            {
+              text: 'Linux实用教程',
+              link: '/docs/test-tutorials/工具操作/Linux实用教程-软件测试版'
+            },
+            {
+              text: 'Postman接口测试教程',
+              link: '/docs/test-tutorials/工具操作/Postman接口测试教程-软件测试版'
+            },
+            {
+              text: 'Postman接口测试测验',
+              link: '/docs/test-tutorials/工具操作/Postman接口测试测验'
+            },
+            {
+              text: 'Redis与MongoDB教程',
+              link: '/docs/test-tutorials/工具操作/Redis与MongoDB教程-软件测试版'
+            },
+            {
+              text: 'Redis与MongoDB测验',
+              link: '/docs/test-tutorials/工具操作/Redis与MongoDB测验'
+            },
+            {
+              text: 'SQL基础测验',
+              link: '/docs/test-tutorials/工具操作/SQL基础测验'
+            },
+            {
+              text: '接口抓包联调实战教程',
+              link: '/docs/test-tutorials/工具操作/接口抓包联调实战教程-软件测试版'
+            },
+            {
+              text: '接口抓包联调测验',
+              link: '/docs/test-tutorials/工具操作/接口抓包联调测验'
+            },
+            {
+              text: '数据库SQL教程',
+              link: '/docs/test-tutorials/工具操作/数据库SQL教程-软件测试版'
+            },
+            {
+              text: '正则表达式教程',
+              link: '/docs/test-tutorials/工具操作/正则表达式教程-软件测试版'
+            },
+            {
+              text: '正则表达式测验',
+              link: '/docs/test-tutorials/工具操作/正则表达式测验'
+            },
+            {
+              text: '正则表达式速查表',
+              link: '/docs/test-tutorials/工具操作/正则表达式速查表-软件测试版'
+            },
+            {
+              text: '禅道与Jira实战教程',
+              link: '/docs/test-tutorials/工具操作/禅道与Jira实战教程-软件测试版'
+            },
+            {
+              text: '禅道与Jira测验',
+              link: '/docs/test-tutorials/工具操作/禅道与Jira测验'
+            },
+            {
+              text: '网络知识教程',
+              link: '/docs/test-tutorials/工具操作/网络知识教程-软件测试版'
+            },
+            {
+              text: '网络知识测验',
+              link: '/docs/test-tutorials/工具操作/网络知识测验'
+            }
+          ]
+        },
+        {
+          text: '04 · 专项测试',
+          collapsed: false,
+          items: [
+            {
+              text: 'AI辅助测试教程',
+              link: '/docs/test-tutorials/专项测试/AI辅助测试教程-软件测试版'
+            },
+            {
+              text: 'AI辅助测试测验',
+              link: '/docs/test-tutorials/专项测试/AI辅助测试测验'
+            },
+            {
+              text: 'JMeter性能测试教程',
+              link: '/docs/test-tutorials/专项测试/JMeter性能测试教程-软件测试版'
+            },
+            {
+              text: 'JMeter性能测试测验',
+              link: '/docs/test-tutorials/专项测试/JMeter性能测试测验'
+            },
+            {
+              text: 'Web安全测试教程',
+              link: '/docs/test-tutorials/专项测试/Web安全测试教程-软件测试版'
+            },
+            {
+              text: 'Web安全测试测验',
+              link: '/docs/test-tutorials/专项测试/Web安全测试测验'
+            },
+            {
+              text: '小程序与H5测试教程',
+              link: '/docs/test-tutorials/专项测试/小程序与H5测试教程-软件测试版'
+            },
+            {
+              text: '小程序与H5测试测验',
+              link: '/docs/test-tutorials/专项测试/小程序与H5测试测验'
+            },
+            {
+              text: '接口测试基础测验',
+              link: '/docs/test-tutorials/专项测试/接口测试基础测验'
+            },
+            {
+              text: '接口测试完整教程',
+              link: '/docs/test-tutorials/专项测试/接口测试完整教程-软件测试版'
+            },
+            {
+              text: '接口测试进阶测验',
+              link: '/docs/test-tutorials/专项测试/接口测试进阶测验'
+            },
+            {
+              text: '测试左右移教程',
+              link: '/docs/test-tutorials/专项测试/测试左右移教程-软件测试版'
+            },
+            {
+              text: '测试左右移测验',
+              link: '/docs/test-tutorials/专项测试/测试左右移测验'
+            },
+            {
+              text: '移动端专项测试教程',
+              link: '/docs/test-tutorials/专项测试/移动端专项测试教程-软件测试版'
+            },
+            {
+              text: '移动端专项测试测验',
+              link: '/docs/test-tutorials/专项测试/移动端专项测试测验'
+            }
+          ]
+        },
+        {
+          text: '05 · 自动化测试',
+          collapsed: false,
+          items: [
+            {
+              text: 'Appium-App自动化教程',
+              link: '/docs/test-tutorials/自动化测试/Appium-App自动化教程-软件测试版'
+            },
+            {
+              text: 'Appium基础测验',
+              link: '/docs/test-tutorials/自动化测试/Appium基础测验'
+            },
+            {
+              text: 'Playwright基础测验',
+              link: '/docs/test-tutorials/自动化测试/Playwright基础测验'
+            },
+            {
+              text: 'Playwright自动化测试教程',
+              link: '/docs/test-tutorials/自动化测试/Playwright自动化测试教程-软件测试版'
+            },
+            {
+              text: 'Python+Requests+Allure接口自动化教程',
+              link: '/docs/test-tutorials/自动化测试/Python+Requests+Allure接口自动化教程-软件测试版'
+            },
+            {
+              text: 'Python接口自动化测验',
+              link: '/docs/test-tutorials/自动化测试/Python接口自动化测验'
+            },
+            {
+              text: 'Selenium-Web自动化教程',
+              link: '/docs/test-tutorials/自动化测试/Selenium-Web自动化教程-软件测试版'
+            },
+            {
+              text: 'Selenium基础测验',
+              link: '/docs/test-tutorials/自动化测试/Selenium基础测验'
+            },
+            {
+              text: '测试框架设计与设计模式教程',
+              link: '/docs/test-tutorials/自动化测试/测试框架设计与设计模式教程'
+            },
+            {
+              text: '测试框架设计测验',
+              link: '/docs/test-tutorials/自动化测试/测试框架设计测验'
+            }
+          ]
+        },
+        {
+          text: '06 · 项目实战',
+          collapsed: false,
+          items: [
+            {
+              text: '总览',
+              link: '/docs/test-tutorials/项目实战/'
+            },
+            {
+              text: 'CICD自动化回归实战',
+              link: '/docs/test-tutorials/项目实战/CICD自动化回归实战'
+            },
+            {
+              text: 'CICD自动化回归测验',
+              link: '/docs/test-tutorials/项目实战/CICD自动化回归测验'
+            },
+            {
+              text: 'Web自动化项目实战',
+              link: '/docs/test-tutorials/项目实战/Web自动化项目实战'
+            },
+            {
+              text: 'Web自动化项目实战测验',
+              link: '/docs/test-tutorials/项目实战/Web自动化项目实战测验'
+            },
+            {
+              text: '性能测试项目实战',
+              link: '/docs/test-tutorials/项目实战/性能测试项目实战'
+            },
+            {
+              text: '性能测试项目实战测验',
+              link: '/docs/test-tutorials/项目实战/性能测试项目实战测验'
+            },
+            {
+              text: '接口自动化项目实战',
+              link: '/docs/test-tutorials/项目实战/接口自动化项目实战'
+            },
+            {
+              text: '接口自动化项目实战测验',
+              link: '/docs/test-tutorials/项目实战/接口自动化项目实战测验'
+            },
+            {
+              text: '电商系统测试实战',
+              link: '/docs/test-tutorials/项目实战/电商系统测试实战'
+            },
+            {
+              text: '电商系统测试实战测验',
+              link: '/docs/test-tutorials/项目实战/电商系统测试实战测验'
+            },
+            {
+              text: '练习靶场与工具清单',
+              link: '/docs/test-tutorials/项目实战/练习靶场与工具清单'
+            }
+          ]
+        },
+        {
+          text: '07 · 持续集成',
+          collapsed: false,
+          items: [
+            {
+              text: 'GitHub-Actions教程',
+              link: '/docs/test-tutorials/持续集成/GitHub-Actions教程-软件测试版'
+            },
+            {
+              text: 'GitLab-CICD教程',
+              link: '/docs/test-tutorials/持续集成/GitLab-CICD教程-软件测试版'
+            },
+            {
+              text: 'Jenkins-CICD教程',
+              link: '/docs/test-tutorials/持续集成/Jenkins-CICD教程-软件测试版'
+            },
+            {
+              text: '持续集成测验',
+              link: '/docs/test-tutorials/持续集成/持续集成测验'
+            }
+          ]
+        },
+        {
+          text: '08 · 模板库',
+          collapsed: false,
+          items: [
+            {
+              text: '总览',
+              link: '/docs/test-tutorials/模板库/'
+            },
+            {
+              text: '上线检查清单',
+              link: '/docs/test-tutorials/模板库/上线检查清单'
+            },
+            {
+              text: '接口测试用例模板',
+              link: '/docs/test-tutorials/模板库/接口测试用例模板'
+            },
+            {
+              text: '测试报告模板',
+              link: '/docs/test-tutorials/模板库/测试报告模板'
+            },
+            {
+              text: '测试用例模板',
+              link: '/docs/test-tutorials/模板库/测试用例模板'
+            },
+            {
+              text: '测试计划模板',
+              link: '/docs/test-tutorials/模板库/测试计划模板'
+            },
+            {
+              text: '缺陷报告模板',
+              link: '/docs/test-tutorials/模板库/缺陷报告模板'
+            }
+          ]
+        },
+        {
+          text: '09 · 案例库',
+          collapsed: false,
+          items: [
+            {
+              text: '总览',
+              link: '/docs/test-tutorials/案例库/'
+            },
+            {
+              text: '下单支付测试案例',
+              link: '/docs/test-tutorials/案例库/下单支付测试案例'
+            },
+            {
+              text: '兼容性测试案例',
+              link: '/docs/test-tutorials/案例库/兼容性测试案例-软件测试版'
+            },
+            {
+              text: '多语言国际化测试案例',
+              link: '/docs/test-tutorials/案例库/多语言国际化测试案例'
+            },
+            {
+              text: '安全测试案例',
+              link: '/docs/test-tutorials/案例库/安全测试案例-软件测试版'
+            },
+            {
+              text: '性能测试案例',
+              link: '/docs/test-tutorials/案例库/性能测试案例-软件测试版'
+            },
+            {
+              text: '搜索功能测试案例',
+              link: '/docs/test-tutorials/案例库/搜索功能测试案例'
+            },
+            {
+              text: '文件上传测试案例',
+              link: '/docs/test-tutorials/案例库/文件上传测试案例'
+            },
+            {
+              text: '权限控制测试案例',
+              link: '/docs/test-tutorials/案例库/权限控制测试案例'
+            },
+            {
+              text: '消息通知测试案例',
+              link: '/docs/test-tutorials/案例库/消息通知测试案例'
+            },
+            {
+              text: '登录功能测试案例',
+              link: '/docs/test-tutorials/案例库/登录功能测试案例'
+            },
+            {
+              text: '购物车测试案例',
+              link: '/docs/test-tutorials/案例库/购物车测试案例'
+            }
+          ]
+        },
+        {
+          text: '10 · 面试专题',
+          collapsed: false,
+          items: [
+            {
+              text: '总览',
+              link: '/docs/test-tutorials/面试专题/'
+            },
+            {
+              text: 'AI测试面试题',
+              link: '/docs/test-tutorials/面试专题/AI测试面试题'
+            },
+            {
+              text: 'CICD面试题',
+              link: '/docs/test-tutorials/面试专题/CICD面试题'
+            },
+            {
+              text: 'Linux面试题',
+              link: '/docs/test-tutorials/面试专题/Linux面试题'
+            },
+            {
+              text: '安全测试面试题',
+              link: '/docs/test-tutorials/面试专题/安全测试面试题'
+            },
+            {
+              text: '岗位JD对照与投递策略',
+              link: '/docs/test-tutorials/面试专题/岗位JD对照与投递策略'
+            },
+            {
+              text: '性能测试面试题',
+              link: '/docs/test-tutorials/面试专题/性能测试面试题'
+            },
+            {
+              text: '接口测试面试题',
+              link: '/docs/test-tutorials/面试专题/接口测试面试题'
+            },
+            {
+              text: '数据库SQL面试题',
+              link: '/docs/test-tutorials/面试专题/数据库SQL面试题'
+            },
+            {
+              text: '测试岗位技能对照与补课指南',
+              link: '/docs/test-tutorials/面试专题/测试岗位技能对照与补课指南'
+            },
+            {
+              text: '测试管理面试题',
+              link: '/docs/test-tutorials/面试专题/测试管理面试题'
+            },
+            {
+              text: '测试职业发展路线图',
+              link: '/docs/test-tutorials/面试专题/测试职业发展路线图-软件测试版'
+            },
+            {
+              text: '移动端测试面试题',
+              link: '/docs/test-tutorials/面试专题/移动端测试面试题'
+            },
+            {
+              text: '简历撰写与项目包装',
+              link: '/docs/test-tutorials/面试专题/简历撰写与项目包装'
+            },
+            {
+              text: '自动化测试面试题',
+              link: '/docs/test-tutorials/面试专题/自动化测试面试题'
+            },
+            {
+              text: '软件测试面试题',
+              link: '/docs/test-tutorials/面试专题/软件测试面试题'
+            },
+            {
+              text: '面试复盘清单',
+              link: '/docs/test-tutorials/面试专题/面试复盘清单'
+            },
+            {
+              text: '面试流程与谈薪',
+              link: '/docs/test-tutorials/面试专题/面试流程与谈薪'
+            },
+            {
+              text: '项目经验表达',
+              link: '/docs/test-tutorials/面试专题/项目经验表达'
+            }
           ]
         }
       ]

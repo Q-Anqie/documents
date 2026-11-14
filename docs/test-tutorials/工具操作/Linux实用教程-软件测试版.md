@@ -136,7 +136,6 @@ scp -r /local/dir username@192.168.1.100:/remote/path/
 | `:/remote/path/` | 远程服务器的目标路径 |
 | `-r` | 递归复制整个目录 |
 
-
 **SFTP（交互式）：**
 
 ```bash
@@ -364,7 +363,6 @@ find /tmp -name "*.log" -exec ls -l {} \;          # 对结果执行命令
 ```
 
 > **`find -exec` 语法：** `-exec` 对每个找到的文件执行后面的命令。`{}` 是占位符，代表当前找到的文件名。`\;` 表示命令结束（必须有）。简单理解：找到文件 → 用 `{}` 替换文件名 → 执行命令。
-
 
 **locate 命令（按数据库快速查找）：**
 
@@ -741,7 +739,6 @@ awk '{sum += $1} END {print sum}' nums.txt
 | `$3 > 100` | 条件：第 3 列大于 100 |
 | `NR` | 当前行号 |
 | `END` | 处理完所有行后执行 |
-
 
 **测试场景示例：**
 
@@ -2533,9 +2530,6 @@ Jun  7 03:15:41 web01 sshd[2180]: Accepted password for testuser from 192.168.1.
 
 ## 下一步建议
 
-::: v-pre
-<div class="tutorial-next-steps" markdown="1">
-
 ### 完成检查
 
 学完本教程后，检查自己是否能做到：
@@ -2563,5 +2557,3 @@ Jun  7 03:15:41 web01 sshd[2180]: Accepted password for testuser from 192.168.1.
 
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
-</div>
-:::

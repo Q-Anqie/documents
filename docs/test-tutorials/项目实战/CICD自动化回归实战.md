@@ -623,7 +623,7 @@ jobs:
         branches: [main]
 
     concurrency:
-      group: ci-${{ github.ref }}
+      group: ci-$&#123;&#123; github.ref &#125;&#125;
       cancel-in-progress: true
 
     jobs:

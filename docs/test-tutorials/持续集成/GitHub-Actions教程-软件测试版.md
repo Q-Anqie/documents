@@ -5,14 +5,10 @@ description: GitHub Actions 教程，矩阵测试、缓存和 Artifacts 管理�
 
 > 本教程面向软件测试工程师，讲解如何使用 GitHub Actions 搭建持续集成流水线，自动化执行测试、生成报告、通知团队。
 
-::: v-pre
-<div class="tutorial-meta">
-    <span class="difficulty-badge difficulty-advanced">📕 高级难度</span>
-    <span class="meta-item">⏱ 约 1.5 天</span>
-    <span class="meta-item">📋 前置：Git 基础、自动化测试基础</span>
-    <span class="meta-item">🎯 目标：使用 GitHub Actions 搭建自动化测试流水线</span>
-</div>
-:::
+    📕 高级难度
+    ⏱ 约 1.5 天
+    📋 前置：Git 基础、自动化测试基础
+    🎯 目标：使用 GitHub Actions 搭建自动化测试流水线
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|
@@ -909,7 +905,7 @@ jobs:
 
 1. **列出全部缺陷**：逐条指出上面这份 workflow 的问题（至少 5 处），并对每一处说明**它会造成什么后果**。至少覆盖：测试失败是否真正阻断、依赖缓存、凭据硬编码、并发控制、触发范围。
 2. **排序并解释**：这些缺陷里，哪一个**最容易让流水线变成"假绿"**？哪一个**风险最高（可能直接造成事故）**？为什么这两者不一定是同一个？
-3. **重写 workflow**：写出一份修好后的 workflow，要求 —— 测试失败必须让 job 失败、使用 `actions/cache` 或 `setup-python` 的 `cache: 'pip'` 缓存依赖、令牌改用 `${{ secrets.DEPLOY_TOKEN }}`、加入 `concurrency` 并发控制、部署只在 `main` 上执行。
+3. **重写 workflow**：写出一份修好后的 workflow，要求 —— 测试失败必须让 job 失败、使用 `actions/cache` 或 `setup-python` 的 `cache: 'pip'` 缓存依赖、令牌改用 `$&#123;&#123; secrets.DEPLOY_TOKEN &#125;&#125;`、加入 `concurrency` 并发控制、部署只在 `main` 上执行。
 4. **解释一个反直觉的点**：为什么给 `pytest` 加上重试，反而可能让问题更难被发现？（结合"失败被 `|| true` 吞掉"这一点说明）
 5. **加一道防线**：写一段配置，让流水线能把测试报告留成可下载的证据（Artifacts），并说明它为什么对排查问题有价值。
 
@@ -926,7 +922,7 @@ jobs:
 
 - [ ] 能指出 `|| true` 会**吞掉测试失败**，是"假绿"的根本原因
 - [ ] 重写后的 workflow 里，测试失败**真的**会让 job 失败（而不是再写个 `|| true` 或 `continue-on-error: true`）
-- [ ] 能正确使用 `${{ secrets.XXX }}` 引用令牌，且说明为什么不能把密钥写进 YAML
+- [ ] 能正确使用 `$&#123;&#123; secrets.XXX &#125;&#125;` 引用令牌，且说明为什么不能把密钥写进 YAML
 - [ ] 能正确写出 `concurrency` 与 `needs`，并解释它们各自解决什么问题
 - [ ] 用 Artifacts 留证，而不是只在日志里找结果
 
@@ -966,7 +962,7 @@ jobs:
 
     # 同一分支只保留最新一次运行，取消排队中的旧运行，避免部署竞态
     concurrency:
-      group: ci-${{ github.ref }}
+      group: ci-$&#123;&#123; github.ref &#125;&#125;
       cancel-in-progress: true
 
     # 最小权限：默认只读，需要的权限显式声明
@@ -1017,7 +1013,7 @@ jobs:
           - name: Deploy to staging
             env:
               # 令牌来自仓库 Secret，不落在 YAML 里
-              DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+              DEPLOY_TOKEN: $&#123;&#123; secrets.DEPLOY_TOKEN &#125;&#125;
             run: |
               echo "deploying..."
               curl -H "Authorization: Bearer $DEPLOY_TOKEN" \
@@ -1027,7 +1023,7 @@ jobs:
     改动要点：
 
     - **删掉 `|| true`** —— 这是让流水线重新"能拦住问题"的关键一步；不要用 `continue-on-error` 替代它。
-    - **令牌改用 `${{ secrets.DEPLOY_TOKEN }}`**，并通过 `env:` 注入给步骤。
+    - **令牌改用 `$&#123;&#123; secrets.DEPLOY_TOKEN &#125;&#125;`**，并通过 `env:` 注入给步骤。
     - **缓存**：`setup-python` 的 `cache: 'pip'` 即可按 `requirements.txt` 做缓存；需要更细粒度时再手写 `actions/cache`：
 
       ```yaml
@@ -1035,9 +1031,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: $&#123;&#123; runner.os &#125;&#125;-pip-$&#123;&#123; hashFiles('requirements.txt') &#125;&#125;
           restore-keys: |
-            ${{ runner.os }}-pip-
+            $&#123;&#123; runner.os &#125;&#125;-pip-
       ```
 
     - **并发控制**：`concurrency.group` 用 `github.ref` 分组，`cancel-in-progress: true` 取消旧运行。
@@ -1069,7 +1065,6 @@ jobs:
     > 一句话总结：**绿色徽章不等于质量。** 判断一条流水线是否可信，只要问一句：**它坏了的时候会不会变红？** 如果答案是否，那它拦住的只有"心情"。
 
 ### 推荐下一步
-
 
 根据你的学习进度，选择下一步：
 

@@ -5,14 +5,10 @@ description: AI 辅助测试教程，AI 生成用例、数据、缺陷分析，�
 
 > 本教程面向软件测试工程师，讲解如何利用 AI 工具提升测试效率，覆盖测试用例生成、测试数据构造、缺陷分析、代码审查，并系统讲解 **AI Agent 测试、MCP 接入、GenAI 应用安全测试** 等当前主流场景。
 
-::: v-pre
-<div class="tutorial-meta">
-    <span class="difficulty-badge difficulty-beginner">📘 入门难度</span>
-    <span class="meta-item">⏱ 约 1 天</span>
-    <span class="meta-item">📋 前置：软件测试基础、接口测试概念</span>
-    <span class="meta-item">🎯 目标：掌握 AI 工具在测试工作中的实用技巧</span>
-</div>
-:::
+    📘 入门难度
+    ⏱ 约 1 天
+    📋 前置：软件测试基础、接口测试概念
+    🎯 目标：掌握 AI 工具在测试工作中的实用技巧
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|

@@ -5,13 +5,9 @@ description: 数据库 SQL 教程，MySQL 增删改查、多表查询和数据�
 
 > 本教程面向软件测试工程师，聚焦测试日常使用场景：数据查询、数据校验、造数据、问题排查。以 MySQL 为主，兼顾通用 SQL 语法。
 
-::: v-pre
-<div class="tutorial-meta">
-    <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
-    <span class="meta-item">⏱ 约 3 天</span>
-    <span class="meta-item">🎯 目标：掌握 SQL 增删改查，能独立进行数据校验</span>
-</div>
-:::
+    📗 入门难度
+    ⏱ 约 3 天
+    🎯 目标：掌握 SQL 增删改查，能独立进行数据校验
 
 ---
 
@@ -1545,9 +1541,6 @@ EXPLAIN SELECT ...;
 
 ## 下一步建议
 
-::: v-pre
-<div class="tutorial-next-steps" markdown="1">
-
 ### 完成检查
 
 学完本教程后，检查自己是否能做到：
@@ -1570,43 +1563,6 @@ EXPLAIN SELECT ...;
     `WHERE` / `JOIN` / `GROUP BY ... HAVING` 是一一对应的——每个函数的
     docstring 都写了它的 SQL 等价写法，照着对照就能把思维迁移回真实 SQL。
 
-
-```json
-{
-  "title": "写数据校验逻辑：找出金额对不上的已支付订单",
-  "prelude": "# 说明：浏览器里的 Python 运行时没有数据库引擎（sqlite3 未随发行版提供），\n# 所以本题用「表 = 字典列表」的方式把数据摆出来，你写的校验逻辑和 SQL 里\n# 的 WHERE / JOIN / GROUP BY ... HAVING 是一一对应的。上方教程里给的是真实 SQL。\n\nUSERS = [\n    {'id': 1, 'username': 'zhangsan', 'status': 'active'},\n    {'id': 2, 'username': 'lisi', 'status': 'active'},\n    {'id': 3, 'username': 'wangwu', 'status': 'disabled'},\n]\n\nPRODUCTS = [\n    {'id': 100, 'name': 'keyboard', 'stock': 10},\n    {'id': 101, 'name': 'monitor', 'stock': 3},\n    {'id': 102, 'name': 'mousepad', 'stock': 0},\n]\n\nORDERS = [\n    {'id': 1001, 'user_id': 1, 'product_id': 100, 'quantity': 2,\n     'unit_price': 399.00, 'coupon_amount': 0.00, 'pay_amount': 798.00, 'status': 'paid'},\n    {'id': 1002, 'user_id': 1, 'product_id': 101, 'quantity': 1,\n     'unit_price': 1299.00, 'coupon_amount': 100.00, 'pay_amount': 1199.00, 'status': 'paid'},\n    {'id': 1003, 'user_id': 2, 'product_id': 100, 'quantity': 1,\n     'unit_price': 399.00, 'coupon_amount': 0.00, 'pay_amount': 399.00, 'status': 'pending'},\n    {'id': 1004, 'user_id': 2, 'product_id': 102, 'quantity': 5,\n     'unit_price': 29.90, 'coupon_amount': 0.00, 'pay_amount': 99.50, 'status': 'paid'},\n    {'id': 1005, 'user_id': 3, 'product_id': 101, 'quantity': 2,\n     'unit_price': 1299.00, 'coupon_amount': 0.00, 'pay_amount': 2598.00, 'status': 'paid'},\n    {'id': 1006, 'user_id': 1, 'product_id': 100, 'quantity': 3,\n     'unit_price': 399.00, 'coupon_amount': 200.00, 'pay_amount': 1197.00, 'status': 'cancelled'},\n]\n\n\ndef find(table, **conditions):\n    \"\"\"按字段等值筛选，等价于 SQL 的 WHERE col = value（可传多个条件，AND 关系）。\n\n    例：find('orders', status='paid')  等价于  SELECT * FROM orders WHERE status = 'paid'\n    \"\"\"\n    data = {'users': USERS, 'products': PRODUCTS, 'orders': ORDERS}[table]\n    return [row for row in data\n            if all(row.get(k) == v for k, v in conditions.items())]\n\n\ndef by_id(table, row_id):\n    \"\"\"按主键取一行，找不到返回 None。\"\"\"\n    got = [r for r in find(table) if r['id'] == row_id]\n    return got[0] if got else None\n",
-  "starterCode": "def bad_amount_orders():\n    \"\"\"任务 1：找出「金额对不上」的订单。\n\n    判定规则：pay_amount != unit_price * quantity - coupon_amount\n    返回：按订单号升序排列的订单 id 列表，例如 [1004]\n\n    注意：本题不要过滤 status——先把所有对不上的都找出来。\n    对应 SQL：SELECT id FROM orders\n             WHERE ABS(pay_amount - (unit_price * quantity - coupon_amount)) > 0.005\n             ORDER BY id\n    \"\"\"\n    # TODO: 遍历 ORDERS，挑出金额对不上的，按 id 升序返回\n    pass\n\n\ndef disabled_user_paid_orders():\n    \"\"\"任务 2：查出「账号已禁用却仍有已支付订单」的订单号。\n\n    返回：按订单号升序的订单 id 列表\n    对应 SQL：SELECT o.id FROM orders o JOIN users u ON u.id = o.user_id\n             WHERE u.status = 'disabled' AND o.status = 'paid' ORDER BY o.id\n    \"\"\"\n    # TODO: 对每笔订单，找到它的 user，再判断两个 status\n    pass\n\n\ndef oversold_products():\n    \"\"\"任务 3：查出「已付款订单数量超过当前库存」的商品名。\n\n    只统计 status = 'paid' 的订单。\n    返回：按商品名升序的商品名字符串列表\n    对应 SQL：SELECT p.name FROM products p\n             JOIN orders o ON o.product_id = p.id AND o.status = 'paid'\n             GROUP BY p.id, p.name, p.stock\n             HAVING SUM(o.quantity) > p.stock ORDER BY p.name\n    \"\"\"\n    # TODO: 先按 product_id 汇总 paid 订单的件数，再和 stock 比\n    pass\n",
-  "tests": [
-    {
-      "name": "任务 1：只有 1004 与 1006 金额对不上",
-      "code": "r = bad_amount_orders()\nassert list(r) == [1004, 1006], f'应为 [1004, 1006]，实际 {r}'",
-      "hint": "1002 是正确的（1299*1-100=1199），别把它算进来；1006 虽然已取消，但金额确实对不上"
-    },
-    {
-      "name": "任务 1：不是把结果写死",
-      "code": "# 把 1004 改对，它就不该再出现在结果里\nby_id('orders', 1004)['pay_amount'] = 149.50\nr = bad_amount_orders()\nassert list(r) == [1006], f'改好 1004 之后应只剩 [1006]，实际 {r}'\nby_id('orders', 1004)['pay_amount'] = 99.50",
-      "hint": "这题是在验证你的函数真的在读数据，而不是 return [1004, 1006]"
-    },
-    {
-      "name": "任务 2：已禁用用户 wangwu 有一笔已支付订单",
-      "code": "r = disabled_user_paid_orders()\nassert list(r) == [1005], f'应为 [1005]，实际 {r}'",
-      "hint": "要同时匹配 users.status='disabled' 和 orders.status='paid'；1003 是 pending，不算"
-    },
-    {
-      "name": "任务 3：库存为 0 的鼠标垫被卖出了 5 件",
-      "code": "r = oversold_products()\nassert list(r) == ['mousepad'], f\"应为 ['mousepad']，实际 {r}\"",
-      "hint": "先按商品汇总 paid 订单的件数，再和 stock 比较"
-    },
-    {
-      "name": "任务 3：把待支付或已取消的订单也计入就会误报",
-      "code": "# 造一个只有「漏掉 status 过滤」才会出错的场景：\n# 新增商品 tablet 库存 5；2 件 paid + 4 件 pending = 合计 6。\n# 正确实现只算 paid(2) 不超卖；漏了 status 过滤会把 pending 也算进去(6>5)从而误报。\nPRODUCTS.append({'id': 103, 'name': 'tablet', 'stock': 5})\nORDERS.append({'id': 1097, 'user_id': 1, 'product_id': 103, 'quantity': 2,\n               'unit_price': 1000.00, 'coupon_amount': 0.00,\n               'pay_amount': 2000.00, 'status': 'paid'})\nORDERS.append({'id': 1098, 'user_id': 2, 'product_id': 103, 'quantity': 4,\n               'unit_price': 1000.00, 'coupon_amount': 0.00,\n               'pay_amount': 4000.00, 'status': 'pending'})\ntry:\n    r = list(oversold_products())\n    assert 'tablet' not in r, f\"tablet 只卖出 2 件 paid < 库存 5，不应报出；实际 {r}（检查是否只统计 paid）\"\n    assert 'mousepad' in r, f\"鼠标垫库存 0 仍应被查出，实际 {r}\"\n    # 再把这笔 pending 改成 paid，tablet 真正超卖(6>5)，必须能查出来\n    by_id('orders', 1098)['status'] = 'paid'\n    r2 = list(oversold_products())\n    assert 'tablet' in r2, f\"tablet 已售 6 件 > 库存 5，应被查出，实际 {r2}\"\nfinally:\n    ORDERS[:] = [o for o in ORDERS if o[\"id\"] not in (1097, 1098)]\n    PRODUCTS[:] = [p for p in PRODUCTS if p[\"id\"] != 103]\nassert list(oversold_products()) == ['mousepad'], '还原后应只剩 mousepad'",
-      "hint": "关键是汇总时只应累计 paid 状态的订单——漏了这个过滤，待支付/已取消的件数都会被算进去"
-    }
-  ]
-}
-```
-
-
 做完点「检查答案」，每题都会给出具体提示。全对之后，本页会在学习进度里
 自动标记为已通过（进度存在浏览器本地，换设备不会同步）。
 
@@ -1628,5 +1584,3 @@ EXPLAIN SELECT ...;
 
 完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
 
-</div>
-:::

@@ -6,13 +6,9 @@ description: Python 基础教程，语法、数据类型、函数、文件操作
 !!! abstract "教程简介"
     本教程面向软件测试工程师，聚焦自动化测试所需的 Python 基础知识，不深入底层原理，够用即可。
 
-::: v-pre
-<div class="tutorial-meta">
-    <span class="difficulty-badge difficulty-beginner">📗 入门难度</span>
-    <span class="meta-item">⏱ 约 3 天</span>
-    <span class="meta-item">🎯 目标：掌握 Python 基础语法，能编写简单测试脚本</span>
-</div>
-:::
+    📗 入门难度
+    ⏱ 约 3 天
+    🎯 目标：掌握 Python 基础语法，能编写简单测试脚本
 
 ---
 
@@ -862,42 +858,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
 
 下面是一个精简版的判分：把「统计」这一步的核心逻辑写出来，点击运行会**自动检查你的实现是否正确**。不需要本地装 Python。
 
-
-```json
-{
-  "title": "实现 summarize()：把用例结果统计成汇总数据",
-  "starterCode": "def summarize(records):\n    \"\"\"统计用例结果。\n\n    records: list[dict]，每个元素形如\n        {\"name\": \"...\", \"status\": \"PASSED\", \"duration\": 1.23}\n        其中 status 为 \"PASSED\" 或 \"FAILED\"；duration 为秒（float）\n\n    返回 dict：\n        {\"total\": 总数, \"passed\": 通过数, \"failed\": 失败数,\n         \"pass_rate\": 通过率(百分数, 如 69.2), \"total_duration\": 总耗时}\n\n    要求：空列表时 pass_rate 与 total_duration 返回 0.0（不要抛异常）\n    \"\"\"\n    # TODO: 在这里实现\n    pass\n",
-  "tests": [
-    {
-      "name": "空列表不报错，返回 0",
-      "code": "r = summarize([])\nassert r['total'] == 0, f\"总数应为 0，实际 {r['total']}\"\nassert r['pass_rate'] == 0.0, f\"空列表时通过率应为 0.0，实际 {r['pass_rate']}\"\nassert r['total_duration'] == 0.0, f\"空列表时总耗时应为 0.0，实际 {r['total_duration']}\"",
-      "hint": "先处理边界：列表为空时直接返回零点值，避免除以 0"
-    },
-    {
-      "name": "统计总数/通过/失败",
-      "code": "data = [{'name':'a','status':'PASSED','duration':1.0},{'name':'b','status':'FAILED','duration':2.0},{'name':'c','status':'PASSED','duration':3.0}]\nr = summarize(data)\nassert r['total'] == 3, f\"总数应为 3，实际 {r['total']}\"\nassert r['passed'] == 2, f\"通过数应为 2，实际 {r['passed']}\"\nassert r['failed'] == 1, f\"失败数应为 1，实际 {r['failed']}\"",
-      "hint": "failed 可以是 total - passed"
-    },
-    {
-      "name": "通过率按百分数计算",
-      "code": "data = [{'name':'a','status':'PASSED','duration':1.0},{'name':'b','status':'FAILED','duration':2.0},{'name':'c','status':'PASSED','duration':3.0}]\nr = summarize(data)\nassert round(r['pass_rate'], 1) == 66.7, f\"2/3 通过率应为 66.7，实际 {round(r['pass_rate'],1)}\"",
-      "hint": "通过率 = 通过数 / 总数 × 100，保留到一位小数由调用方处理即可"
-    },
-    {
-      "name": "总耗时求和",
-      "code": "data = [{'name':'a','status':'PASSED','duration':1.23},{'name':'b','status':'FAILED','duration':2.31},{'name':'c','status':'PASSED','duration':1.95}]\nr = summarize(data)\nassert round(r['total_duration'], 2) == 5.49, f\"总耗时应为 5.49，实际 {round(r['total_duration'],2)}\"",
-      "hint": "用 sum() 累加每条的 duration"
-    },
-    {
-      "name": "用真实数据复算（13 条用例）",
-      "code": "raw = [('login',1,'PASSED',1.23),('login',2,'PASSED',0.89),('login',3,'PASSED',1.45),('order',4,'PASSED',2.10),('order',5,'FAILED',1.88),('order',6,'FAILED',2.31),('order',7,'FAILED',1.95),('pay',8,'PASSED',3.42),('pay',9,'FAILED',3.66),('pay',10,'PASSED',2.87),('cart',11,'PASSED',0.55),('cart',12,'PASSED',0.61),('cart',13,'PASSED',0.58)]\ndata = [{'name': f'{m}-{i}', 'status': s, 'duration': d} for m, i, s, d in raw]\nr = summarize(data)\nassert r['total'] == 13, f\"总数应为 13，实际 {r['total']}\"\nassert r['passed'] == 9 and r['failed'] == 4, f\"应为 9 通过 4 失败，实际 {r['passed']}/{r['failed']}\"\nassert round(r['pass_rate'], 1) == 69.2, f\"通过率应为 69.2，实际 {round(r['pass_rate'],1)}\"\nassert round(r['total_duration'], 2) == 23.50, f\"总耗时应为 23.50，实际 {round(r['total_duration'],2)}\"",
-      "hint": "这就是任务里的那份数据：答案见教程参考答案（通过率 69.2%，总耗时 23.50s）"
-    }
-  ]
-}
-```
-
-
 !!! tip "关于这个在线判分"
     它会**执行你写的函数**并用断言检查结果——所以逻辑对了就能通过，不要求变量名和参考答案完全一致。如果报错信息看不懂，把错误信息复制给 AI 让它解释，也是很好的练法。
 
@@ -920,7 +880,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
 
     RESULT_FILE = "results.txt"
     PASS_THRESHOLD = 95.0      # 通过率阈值（%）
-
 
     def parse_line(line):
         """解析一行：<文件路径>::<用例名> <状态> <耗时>
@@ -958,12 +917,10 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
             "duration_valid": duration_valid,
         }
 
-
     def module_of(path):
         """从 tests/xxx/yyy.py 取出模块名 xxx。"""
         parts = path.split("/")
         return parts[1] if len(parts) > 1 else "(unknown)"
-
 
     def load_results(filename):
         """读取并解析结果文件；文件不存在时返回 None。"""
@@ -983,7 +940,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
                 records.append(rec)
         return records
 
-
     def summarize(records):
         """统计总览。"""
         total = len(records)
@@ -998,7 +954,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
             "avg_duration": avg_duration,
         }
 
-
     def group_by_module(records):
         """按模块统计用例数与失败数。"""
         stats = {}
@@ -1011,7 +966,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
                 stats[mod]["failed"] += 1
         return stats
 
-
     def build_verdict(summary, module_stats):
         """给出发版结论。"""
         if summary["pass_rate"] >= PASS_THRESHOLD:
@@ -1021,7 +975,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
         worst_names = [f"{m}({s['failed']} 个失败)" for m, s in worst if s["failed"] > 0]
         return (f"❌ 不可发版（通过率 {summary['pass_rate']:.1f}% < {PASS_THRESHOLD}%）\n"
                 f"   失败最多的模块：{'、'.join(worst_names)}")
-
 
     def main():
         records = load_results(RESULT_FILE)
@@ -1047,7 +1000,6 @@ tests/cart/test_cart.py::test_delete_item PASSED 0.58
         print("\n发版结论：")
         print(build_verdict(summary, module_stats))
         return 0
-
 
     if __name__ == "__main__":
         sys.exit(main())

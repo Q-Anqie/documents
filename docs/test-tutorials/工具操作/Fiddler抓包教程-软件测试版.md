@@ -765,7 +765,9 @@ Content-Type: application/json
     |------|------|
     | 标题 | 加购接口返回价格与商品详情不一致（99 → 129） |
     | 前置 | 商品 1001 详情价 99，购物车为空 |
-    | 步骤 | 1. 调 `/api/product/1001` 确认 price=99<br>2. 调 `/api/cart/add` 传 productId=1001, quantity=1<br>3. 查看响应中的 price |
+    | 步骤 | 1. 调 `/api/product/1001` 确认 price=99  
+2. 调 `/api/cart/add` 传 productId=1001, quantity=1  
+3. 查看响应中的 price |
     | 预期 | 加购返回 price=99（与详情一致） |
     | 实际 | 加购返回 price=129 |
     | 影响 | 结算金额错误，用户实付与预期不符，存在资损与投诉风险 |

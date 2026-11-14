@@ -5,14 +5,10 @@ description: Jenkins CI/CD 教程，Pipeline 流水线和自动化测试集成�
 
 > 本教程面向软件测试工程师，讲解如何使用 Jenkins 搭建持续集成流水线，自动化执行测试、生成报告、通知团队。
 
-::: v-pre
-<div class="tutorial-meta">
-    <span class="difficulty-badge difficulty-advanced">📕 高级难度</span>
-    <span class="meta-item">⏱ 约 2 天</span>
-    <span class="meta-item">📋 前置：Git 基础、自动化测试基础</span>
-    <span class="meta-item">🎯 目标：搭建 CI/CD 自动化测试流水线</span>
-</div>
-:::
+    📕 高级难度
+    ⏱ 约 2 天
+    📋 前置：Git 基础、自动化测试基础
+    🎯 目标：搭建 CI/CD 自动化测试流水线
 
 | 项目 | 要求 | 获取方式 |
 |------|------|----------|
@@ -127,7 +123,6 @@ docker run -d \
 | `-p 50000:50000` | Agent 通信端口 |
 | `-v jenkins_home:/var/jenkins_home` | 持久化 Jenkins 数据 |
 | `jenkins/jenkins:lts` | 使用 LTS 版本镜像 |
-
 
 **方式二：WAR 包**
 
@@ -1689,9 +1684,6 @@ def test_create_order(api):
 
 ## 下一步建议
 
-::: v-pre
-<div class="tutorial-next-steps" markdown="1">
-
 ### 完成检查
 
 学完本教程后，检查自己是否能做到：
@@ -1719,5 +1711,3 @@ def test_create_order(api):
 
 完成本阶段后，使用 [第5阶段-项目面试通关](../学习中心/第5阶段-项目面试通关.md) 检查是否可以进入下一阶段。
 
-</div>
-:::
