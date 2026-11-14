@@ -1,0 +1,2565 @@
+---
+description: Linux 实用教程，命令行操作、日志分析和性能监控。
+---
+# Linux 实用教程（软件测试人员专用）
+
+> 本教程面向软件测试工程师，聚焦测试日常工作场景：环境部署、日志排查、性能监控、服务管理。不深入内核、编译原理等开发向内容。
+
+---
+
+## 前置要求
+
+无前置要求，零基础可直接学习。
+
+---
+
+## 新手导读
+
+Linux 命令很多，新手不要按字典背。测试工作里先掌握“查日志、看进程、查端口、看磁盘、看服务状态”这五类就够用。
+
+建议第一遍优先练：
+
+1. `pwd`、`ls`、`cd`：知道自己在哪。
+2. `cat`、`less`、`tail -f`：查看日志。
+3. `ps`、`top`、`free`、`df -h`：查看系统状态。
+4. `grep`：从日志里搜索关键字。
+5. `systemctl`：查看服务是否运行。
+
+不要在生产环境练习删除、移动、批量修改命令。危险命令一定先在测试目录验证。
+
+---
+## 一、Linux 简介
+
+### 1.1 测试人员为什么要学 Linux
+
+| 工作场景 | Linux 是否必需 |
+|---------|--------------|
+| 部署被测系统 | 必需，绝大多数服务器是 Linux |
+| 查看应用日志 | 必需，日志在服务器上 |
+| 排查线上 Bug | 必需，需要登录服务器抓数据 |
+| 性能测试 | 必需，监控 CPU/内存/磁盘 |
+| 自动化测试环境 | 必需，CI/CD 通常基于 Linux |
+| 数据库测试 | 必需，多数数据库部署在 Linux |
+| 移动端测试 | 部分必需，Android 底层是 Linux |
+
+### 1.2 常见发行版
+
+| 发行版 | 特点 | 包管理 |
+|--------|------|--------|
+| **CentOS / RHEL** | 企业级首选，稳定 | `yum` / `dnf` |
+| **Ubuntu** | 桌面友好，社区活跃 | `apt` |
+| **Debian** | Ubuntu 基础，稳定 | `apt` |
+| **Alpine** | 体积小，Docker 常用 | `apk` |
+| **OpenEuler / 麒麟** | 国产化替代 | `yum` / `dnf` |
+
+!!! tip "测试人员建议"
+    生产环境更常见的是 RHEL 系（Rocky Linux、AlmaLinux、CentOS Stream）与 Ubuntu LTS；老项目仍可能遇到 CentOS 7，相关命令需要结合系统版本确认。
+
+### 1.3 Linux 目录结构
+
+```
+/                根目录
+├── bin/         基础命令（ls、cp 等）
+├── boot/        启动文件
+├── dev/         设备文件
+├── etc/         配置文件（重要！修改配置常来这）
+├── home/        普通用户主目录
+├── lib/         系统库
+├── mnt/         挂载点
+├── opt/         第三方应用（很多公司部署应用在此）
+├── proc/        进程信息（虚拟文件系统）
+├── root/        root 用户主目录
+├── sbin/        系统管理命令
+├── tmp/         临时文件（重启会清空）
+├── usr/         用户程序（/usr/local/ 常用于安装软件）
+└── var/         可变数据（/var/log/ 系统日志）
+```
+
+**测试人员重点关注：**
+
+- `/etc/` — 配置文件
+- `/var/log/` — 系统日志
+- `/opt/` 或 `/usr/local/` — 应用部署位置
+- `/tmp/` — 临时文件
+
+---
+
+## 二、连接 Linux 服务器
+
+### 2.1 SSH 工具选择
+
+| 工具 | 平台 | 特点 |
+|------|------|------|
+| **Xshell / Xftp** | Windows | 商业软件，企业常用 |
+| **MobaXterm** | Windows | 集成度高，免费 |
+| **FinalShell** | 全平台 | 国产，免费，自带性能监控 |
+| **SecureCRT** | 全平台 | 老牌商业工具 |
+| **iTerm2 + ssh** | Mac | 原生体验 |
+| **Windows Terminal + ssh** | Windows 10+ | 微软官方 |
+| **VSCode Remote-SSH** | 全平台 | 可视化编辑远程文件 |
+
+### 2.2 SSH 命令连接
+
+```bash
+# 基础连接
+ssh username@192.168.1.100
+
+# 指定端口（默认 22）
+ssh -p 2222 username@192.168.1.100
+
+# 使用密钥登录
+ssh -i ~/.ssh/id_rsa username@192.168.1.100
+```
+
+首次连接会提示确认指纹，输入 `yes` 后输入密码即可登录。
+
+### 2.3 文件传输
+
+**SCP 命令（命令行）：**
+
+```bash
+# 本地 → 远程
+scp /local/file.txt username@192.168.1.100:/remote/path/
+
+# 远程 → 本地
+scp username@192.168.1.100:/remote/file.txt /local/path/
+
+# 传输文件夹（加 -r）
+scp -r /local/dir username@192.168.1.100:/remote/path/
+```
+**参数拆解：**
+
+| 部分 | 含义 |
+|------|------|
+| `scp` | Secure Copy，基于 SSH 的安全文件传输 |
+| `username@192.168.1.100` | 远程服务器的用户名和地址 |
+| `:/remote/path/` | 远程服务器的目标路径 |
+| `-r` | 递归复制整个目录 |
+
+
+**SFTP（交互式）：**
+
+```bash
+sftp username@192.168.1.100
+
+# 进入 sftp 后常用命令
+put localfile.txt        # 上传
+get remotefile.txt       # 下载
+ls                       # 列出远程文件
+lls                      # 列出本地文件
+bye                      # 退出
+```
+
+工具如 Xftp、FinalShell 提供图形化拖拽传输，更直观。
+
+### 2.4 免密登录配置
+
+频繁登录服务器时，配置密钥免密登录：
+
+```bash
+# 在本地生成密钥对（一路回车）
+ssh-keygen -t rsa
+
+# 将公钥发送到服务器
+ssh-copy-id username@192.168.1.100
+
+# 之后登录无需密码
+ssh username@192.168.1.100
+```
+
+---
+
+## 三、基础命令入门
+
+### 3.1 命令格式
+
+```
+命令 [选项] [参数]
+
+示例：ls -la /home/test
+     ^   ^   ^
+     命令 选项 参数
+```
+
+- 短选项：`-l`、`-a`，可合并 `-la`
+- 长选项：`--help`、`--version`
+- 多数命令支持 `--help` 查看用法
+
+### 3.2 必备的"导航"命令
+
+```bash
+pwd                    # 显示当前路径（print working directory）
+```
+
+```
+/home/testuser
+```
+
+```bash
+whoami                 # 显示当前用户
+```
+
+```
+testuser
+```
+
+```bash
+hostname               # 显示主机名
+```
+
+```
+app-server-01
+```
+
+```bash
+date                   # 显示当前时间
+uname -a               # 显示系统信息
+uptime                 # 显示运行时长和负载
+history                # 查看历史命令
+clear                  # 清屏（快捷键 Ctrl+L）
+exit                   # 退出当前 shell
+```
+
+### 3.3 获取帮助
+
+```bash
+ls --help              # 命令简要帮助
+man ls                 # 完整手册（按 q 退出）
+info ls                # info 文档
+which ls               # 查看命令路径
+type ls                # 查看命令类型
+```
+
+### 3.4 命令行快捷键
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Tab` | 自动补全（最常用） |
+| `Ctrl + C` | 中断当前命令 |
+| `Ctrl + D` | 退出当前 shell / 结束输入 |
+| `Ctrl + L` | 清屏 |
+| `Ctrl + R` | 搜索历史命令 |
+| `Ctrl + A` | 光标移到行首 |
+| `Ctrl + E` | 光标移到行尾 |
+| `Ctrl + U` | 删除光标到行首 |
+| `Ctrl + K` | 删除光标到行尾 |
+| `Ctrl + W` | 删除光标前一个单词 |
+| `↑ / ↓` | 切换历史命令 |
+| `!!` | 重复上一条命令 |
+| `!grep` | 重复最近以 grep 开头的命令 |
+
+---
+
+## 四、文件与目录操作
+
+### 4.1 查看与切换目录
+
+```bash
+ls                     # 列出当前目录
+ls -l                  # 详细列表（权限/大小/时间）
+ls -la                 # 包含隐藏文件
+```
+
+```
+total 32
+drwxr-xr-x 5 testuser testuser 4096 Jun  7 10:00 .
+drwxr-xr-x 3 root     root     4096 Jun  1 09:00 ..
+-rw------- 1 testuser testuser  220 Jun  1 09:00 .bash_history
+-rw-r--r-- 1 testuser testuser  807 Jun  1 09:00 .bashrc
+drwxr-xr-x 2 testuser testuser 4096 Jun  5 14:30 Desktop
+drwxr-xr-x 2 testuser testuser 4096 Jun  6 16:00 logs
+-rw-r--r-- 1 testuser testuser  512 Jun  7 10:00 test.sh
+```
+
+```bash
+ls -lh                 # 文件大小人类可读（K/M/G）
+ls -lt                 # 按时间排序
+ls -lS                 # 按大小排序
+ls /var/log            # 列出指定目录
+
+cd /etc                # 切换到 /etc
+cd ~                   # 回到家目录
+cd -                   # 回到上一个目录
+cd ..                  # 上一级目录
+cd ../..               # 上两级目录
+```
+
+### 4.2 创建与删除
+
+```bash
+# 创建文件（空文件）
+touch test.txt
+
+# 创建目录
+mkdir mydir
+mkdir -p a/b/c         # 递归创建多层目录
+
+# 删除文件
+rm test.txt
+rm -f test.txt         # 强制删除（不提示）
+
+# 删除目录
+rmdir emptydir         # 仅能删除空目录
+rm -rf mydir           # 递归强制删除（危险！）
+```
+
+!!! danger "危险"
+    `rm -rf` 是 Linux 最危险的命令。执行前务必确认路径，特别是不要在 `/` 下使用。`rm -rf /` 会清空整个系统。
+
+### 4.3 复制与移动
+
+```bash
+# 复制
+cp source.txt dest.txt
+cp source.txt /tmp/    # 复制到目录
+cp -r dir1 dir2        # 复制目录（递归）
+cp -p file dest        # 保留权限和时间戳
+
+# 移动 / 重命名
+mv old.txt new.txt     # 重命名
+mv file.txt /tmp/      # 移动到目录
+mv *.log /tmp/logs/    # 移动所有 .log
+```
+
+### 4.4 查找文件
+
+**find 命令（按属性查找）：**
+
+```bash
+# 按文件名
+find /var/log -name "*.log"
+```
+
+```
+/var/log/auth.log
+/var/log/syslog
+/var/log/nginx/access.log
+/var/log/nginx/error.log
+/var/log/mysql/error.log
+```
+
+```bash
+find / -iname "test*"           # 忽略大小写
+
+# 按类型
+find /tmp -type f               # 文件
+find /tmp -type d               # 目录
+
+# 按大小
+find /var -size +100M           # 大于 100M
+find /var -size -1M             # 小于 1M
+
+# 按修改时间
+find /var/log -mtime -7         # 最近 7 天修改
+find /var/log -mtime +30        # 30 天前修改
+find /var/log -mmin -60         # 最近 60 分钟修改
+
+# 按用户
+find /home -user testuser
+
+# 组合 + 操作
+find /tmp -name "*.tmp" -delete                    # 找到并删除
+find /var/log -name "*.log" -mtime +30 -delete     # 删除 30 天前日志
+find /tmp -name "*.log" -exec ls -l {} \;          # 对结果执行命令
+```
+
+> **`find -exec` 语法：** `-exec` 对每个找到的文件执行后面的命令。`{}` 是占位符，代表当前找到的文件名。`\;` 表示命令结束（必须有）。简单理解：找到文件 → 用 `{}` 替换文件名 → 执行命令。
+
+
+**locate 命令（按数据库快速查找）：**
+
+```bash
+locate test.txt        # 比 find 快很多
+updatedb               # 更新数据库
+```
+
+### 4.5 链接文件
+
+```bash
+# 软链接（类似 Windows 快捷方式）
+ln -s /opt/app/current /usr/local/app
+
+# 硬链接（同一文件多个名字）
+ln source.txt link.txt
+```
+
+测试场景常用软链接切换应用版本：
+```bash
+ln -sf /opt/app/v2.0 /opt/app/current
+```
+
+---
+
+## 五、文件查看与编辑
+
+### 5.1 查看文件内容
+
+```bash
+# 全文显示（适合小文件）
+cat file.txt
+cat -n file.txt        # 显示行号
+
+# 分页查看（推荐查看大文件）
+more file.txt          # 空格翻页，q 退出
+less file.txt          # 功能更强（推荐）
+
+# 看头/尾
+head file.txt          # 默认前 10 行
+head -n 50 file.txt    # 前 50 行
+tail file.txt          # 默认后 10 行
+tail -n 50 file.txt    # 后 50 行
+
+# 实时跟踪日志（测试人员最常用！）
+tail -f app.log        # 持续输出新内容
+tail -f -n 100 app.log # 先显示后 100 行再持续跟踪
+```
+
+### 5.2 less 命令快捷键（推荐）
+
+| 快捷键 | 功能 |
+|--------|------|
+| `空格` / `Page Down` | 向下翻页 |
+| `b` / `Page Up` | 向上翻页 |
+| `↑ / ↓` | 上下一行 |
+| `g` | 跳到首行 |
+| `G` | 跳到末行 |
+| `/keyword` | 向下搜索 keyword |
+| `?keyword` | 向上搜索 keyword |
+| `n` | 下一个匹配 |
+| `N` | 上一个匹配 |
+| `q` | 退出 |
+| `F` | 类似 `tail -f`，按 Ctrl+C 退出此模式 |
+
+### 5.3 vi/vim 编辑器
+
+vim 有三种模式，初学者最容易卡在这里。
+
+```
+┌────────────┐  i, a, o   ┌────────────┐
+│  普通模式   │ ─────────→ │  编辑模式   │
+│ Normal     │ ←───────── │ Insert     │
+└────┬───────┘    Esc     └────────────┘
+     │ :
+     ↓
+┌────────────┐
+│  命令模式   │
+│ Command    │
+└────────────┘
+```
+
+**基本操作流程：**
+
+```bash
+vim file.txt           # 打开文件，默认普通模式
+# 按 i 进入编辑模式，开始输入文本
+# 按 Esc 回到普通模式
+# 按 :wq 保存并退出
+```
+
+**普通模式常用命令：**
+
+| 命令 | 功能 |
+|------|------|
+| `i` | 在光标前插入 |
+| `a` | 在光标后插入 |
+| `o` | 在下一行插入 |
+| `dd` | 删除当前行 |
+| `5dd` | 删除 5 行 |
+| `yy` | 复制当前行 |
+| `5yy` | 复制 5 行 |
+| `p` | 粘贴到光标后 |
+| `u` | 撤销 |
+| `Ctrl + r` | 重做 |
+| `gg` | 跳到文件开头 |
+| `G` | 跳到文件结尾 |
+| `:10` | 跳到第 10 行 |
+| `/keyword` | 搜索 keyword |
+| `n` / `N` | 下/上一个匹配 |
+| `:%s/old/new/g` | 全文替换 old 为 new |
+
+**命令模式（先按 `:`）：**
+
+| 命令 | 功能 |
+|------|------|
+| `:w` | 保存 |
+| `:q` | 退出 |
+| `:wq` | 保存并退出 |
+| `:q!` | 强制退出（不保存） |
+| `:wq!` | 强制保存并退出 |
+| `:set nu` | 显示行号 |
+| `:set nonu` | 不显示行号 |
+
+!!! tip "测试人员小贴士"
+    如果只是修改配置文件，不熟悉 vim 时可以用 `nano` 代替，操作类似 Windows 记事本：
+    ```bash
+    nano file.txt
+    # Ctrl+O 保存，Ctrl+X 退出
+    ```
+
+---
+
+## 六、用户与权限管理
+
+### 6.1 用户管理
+
+```bash
+# 查看当前用户
+whoami
+id
+
+# 切换用户
+su - testuser          # 切换到 testuser
+sudo command           # 以 root 权限执行单条命令
+sudo -i                # 切换到 root（需当前用户有 sudo 权限）
+
+# 创建用户（需 root）
+useradd testuser
+passwd testuser        # 设置密码
+
+# 删除用户
+userdel testuser       # 仅删用户
+userdel -r testuser    # 连同家目录一起删
+```
+
+### 6.2 文件权限基础
+
+```bash
+ls -l file.txt
+# 输出：-rw-r--r-- 1 root root 1024 Jun 7 10:00 file.txt
+#       │└┬┘└┬┘└┬┘
+#       │ │  │  └─ 其他用户权限
+#       │ │  └──── 所属组权限
+#       │ └─────── 文件所有者权限
+#       └──────── 文件类型（- 文件，d 目录，l 链接）
+```
+
+**权限位含义：**
+
+| 字符 | 含义 | 数字 |
+|------|------|------|
+| `r` | 读 | 4 |
+| `w` | 写 | 2 |
+| `x` | 执行 | 1 |
+| `-` | 无权限 | 0 |
+
+**常见权限组合：**
+
+| 数字 | 字符 | 含义 |
+|------|------|------|
+| 755 | rwxr-xr-x | 所有者全权，其他读+执行（脚本常用） |
+| 644 | rw-r--r-- | 所有者读写，其他只读（配置文件常用） |
+| 777 | rwxrwxrwx | 所有人全权（不安全） |
+| 600 | rw------- | 仅所有者读写（密钥文件常用） |
+
+### 6.3 修改权限
+
+```bash
+# 数字方式（推荐，简洁）
+chmod 755 script.sh
+chmod 644 config.yaml
+chmod -R 755 mydir      # 递归修改
+
+# 字符方式
+chmod +x script.sh      # 添加执行权限
+chmod -w file.txt       # 移除写权限
+chmod u+x,g-w file.txt  # 用户加执行，组去写
+```
+
+### 6.4 修改所有者
+
+```bash
+chown testuser file.txt           # 改所有者
+chown testuser:testgroup file.txt # 改所有者和组
+chown -R testuser /opt/app        # 递归
+```
+
+### 6.5 sudo 权限
+
+```bash
+# 配置 sudo 权限（root 执行）
+visudo
+
+# 添加用户到 sudo 组（Ubuntu）
+usermod -aG sudo testuser
+
+# 添加用户到 wheel 组（CentOS）
+usermod -aG wheel testuser
+```
+
+---
+
+## 七、文本处理三剑客
+
+!!! abstract "测试人员核心技能"
+    grep、sed、awk 是 Linux 处理日志的三大利器，必须掌握。
+
+### 7.1 grep（过滤）
+
+**基础用法：**
+
+```bash
+# 在文件中搜索关键字
+grep "ERROR" app.log
+```
+
+```
+2026-06-07 10:23:15 ERROR OrderService - OrderException: 订单号100045不存在
+2026-06-07 10:25:33 ERROR PaymentService - TimeoutException: 支付网关超时
+2026-06-07 11:02:07 ERROR UserService - NullPointerException: 用户信息为空
+```
+
+```bash
+# 忽略大小写
+grep -i "error" app.log
+
+# 显示行号
+grep -n "ERROR" app.log
+
+# 显示匹配行的前后内容
+grep -A 3 "ERROR" app.log     # 匹配行后 3 行
+grep -B 3 "ERROR" app.log     # 匹配行前 3 行
+grep -C 3 "ERROR" app.log     # 匹配行前后各 3 行
+
+# 反向匹配（不包含）
+grep -v "DEBUG" app.log
+
+# 统计匹配行数
+grep -c "ERROR" app.log
+
+# 仅显示匹配的文件名
+grep -l "ERROR" *.log
+
+# 递归搜索目录
+grep -r "ERROR" /var/log/
+
+# 正则表达式
+grep -E "ERROR|WARN" app.log
+grep -E "^[0-9]{4}-[0-9]{2}-[0-9]{2}" app.log    # 日期开头的行
+```
+
+**测试常用组合：**
+
+```bash
+# 统计今天的错误数
+grep "$(date +%Y-%m-%d)" app.log | grep -c "ERROR"
+
+# 查看错误及上下文
+grep -B 2 -A 5 "Exception" app.log
+
+# 多关键字过滤
+grep "ERROR" app.log | grep "OrderService"
+
+# 排除某些关键字
+grep "ERROR" app.log | grep -v "test"
+```
+
+### 7.2 sed（替换/编辑）
+
+```bash
+# 替换（输出到屏幕，不修改文件）
+sed 's/old/new/' file.txt          # 每行第一个
+sed 's/old/new/g' file.txt         # 全部替换
+
+# 替换并写回原文件
+sed -i 's/old/new/g' file.txt
+
+# 删除特定行
+sed '5d' file.txt                  # 删除第 5 行
+sed '/pattern/d' file.txt          # 删除匹配行
+sed '2,5d' file.txt                # 删除 2-5 行
+
+# 打印特定行
+sed -n '5p' file.txt               # 打印第 5 行
+sed -n '5,10p' file.txt            # 打印 5-10 行
+sed -n '/ERROR/p' file.txt         # 打印含 ERROR 的行
+```
+
+**测试常用：**
+
+```bash
+# 批量修改配置文件
+sed -i 's/127.0.0.1/192.168.1.100/g' app.conf
+
+# 修改端口号
+sed -i 's/port=8080/port=9090/' application.yml
+
+# 删除空行
+sed -i '/^$/d' file.txt
+
+# 删除以 # 开头的注释
+sed -i '/^#/d' config.conf
+```
+
+**参数拆解：**
+
+| 部分 | 含义 |
+|------|------|
+| `sed -i` | `-i` 表示直接修改原文件（不加 `-i` 只输出到屏幕） |
+| `'s/old/new/g'` | `s` 表示替换，`/` 是分隔符，`g` 表示全局替换（每行所有匹配都改） |
+| `'/^$/d'` | `^$` 表示空行（从头到尾什么都没有），`d` 表示删除 |
+| `'/^#/d'` | `^#` 表示以 `#` 开头的行（通常是注释），`d` 删除 |
+
+### 7.3 awk（按列处理）
+
+awk 适合处理结构化文本（如表格、日志的特定列）。
+
+**基础语法：**
+
+```bash
+awk '条件 {动作}' 文件
+```
+
+**示例：**
+
+```bash
+# 打印第 1 列
+awk '{print $1}' file.txt
+
+# 打印第 1 列和第 3 列
+awk '{print $1, $3}' file.txt
+
+# 指定分隔符（默认空格/Tab）
+awk -F: '{print $1}' /etc/passwd       # 冒号分隔，打印用户名
+
+# 条件筛选
+awk '$3 > 100 {print $1, $3}' file.txt   # 第 3 列大于 100
+
+# 内置变量
+awk '{print NR, $0}' file.txt          # NR 行号，$0 整行
+awk 'END {print NR}' file.txt          # 统计总行数
+
+# 计算总和
+awk '{sum += $1} END {print sum}' nums.txt
+```
+**参数拆解：**
+
+| 部分 | 含义 |
+|------|------|
+| `awk` | 文本处理工具，按行处理 |
+| `{print $1}` | 打印第 1 列（`$0` 是整行，`$NF` 是最后一列） |
+| `-F:` | 指定分隔符为冒号（默认是空格/Tab） |
+| `$3 > 100` | 条件：第 3 列大于 100 |
+| `NR` | 当前行号 |
+| `END` | 处理完所有行后执行 |
+
+
+**测试场景示例：**
+
+```bash
+# 统计 Nginx 访问日志中每个 IP 的访问次数
+awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -10
+```
+
+| 部分 | 含义 |
+|------|------|
+| `awk '{print $1}'` | 提取第 1 列（IP 地址） |
+| `sort` | 排序（uniq 要求输入已排序） |
+| `uniq -c` | 去重并计数（-c 显示出现次数） |
+| `sort -rn` | 按数值倒序排列（-n 数值排序，-r 倒序） |
+| `head -10` | 只显示前 10 条 |
+
+```
+   2345 192.168.1.50
+   1892 192.168.1.51
+   1023 10.0.0.15
+    876 192.168.1.52
+    543 10.0.0.22
+```
+
+```bash
+# 统计 HTTP 状态码分布
+awk '{print $9}' access.log | sort | uniq -c | sort -rn
+```
+
+```
+  12583 200
+   3421 304
+    892 404
+    234 500
+     12 502
+```
+
+```bash
+# 计算接口平均响应时间（假设第 10 列是响应时间）
+awk '{sum+=$10; count++} END {print sum/count}' access.log
+
+# 找出响应时间超过 1 秒的请求
+awk '$10 > 1000 {print $0}' access.log
+```
+
+### 7.4 管道与重定向
+
+**管道 `|`：** 把前一个命令的输出作为后一个命令的输入
+
+```bash
+cat app.log | grep "ERROR" | wc -l                    # 统计错误数
+ps aux | grep nginx                                    # 查找 nginx 进程
+ls -lh /var/log | awk '{print $5, $9}' | sort -h      # 按大小排序文件
+```
+
+**重定向：**
+
+```bash
+# 输出重定向（覆盖）
+ls > files.txt
+
+# 输出重定向（追加）
+ls >> files.txt
+
+# 错误输出重定向
+command 2> error.log
+
+# 标准输出和错误输出合并
+command > output.log 2>&1
+command &> output.log              # 等价写法
+
+# 丢弃输出（黑洞）
+command > /dev/null 2>&1
+
+# 输入重定向
+mysql -uroot -p < backup.sql
+```
+
+**测试常用：**
+
+```bash
+# 执行测试脚本，日志写入文件，错误也包含
+./test.sh > test.log 2>&1
+
+# 后台执行 + 日志重定向
+nohup ./test.sh > test.log 2>&1 &
+```
+
+---
+
+## 八、日志分析实战
+
+!!! abstract "核心概念"
+    这是测试人员的核心日常工作。下面是真实场景下的日志分析套路。
+
+### 8.1 常见日志位置
+
+| 路径 | 内容 |
+|------|------|
+| `/var/log/messages` | 系统消息（CentOS） |
+| `/var/log/syslog` | 系统消息（Ubuntu） |
+| `/var/log/secure` | 安全日志（登录） |
+| `/var/log/dmesg` | 内核启动日志 |
+| `/var/log/cron` | 定时任务日志 |
+| `/var/log/nginx/access.log` | Nginx 访问日志 |
+| `/var/log/nginx/error.log` | Nginx 错误日志 |
+| `/var/log/mysql/error.log` | MySQL 错误日志 |
+| 应用日志 | 通常在 `/opt/<app>/logs/` 或 `/data/logs/` |
+
+### 8.2 实时跟踪日志
+
+```bash
+# 实时查看日志（最常用！）
+tail -f app.log
+
+# 同时跟踪多个文件
+tail -f app.log error.log
+
+# 显示最后 200 行后继续跟踪
+tail -n 200 -f app.log
+
+# 过滤后实时跟踪
+tail -f app.log | grep "ERROR"
+
+# 高亮关键字（颜色）
+tail -f app.log | grep --color=auto -E "ERROR|WARN"
+```
+
+### 8.3 历史日志分析
+
+```bash
+# 按时间过滤
+grep "2026-06-07 14:" app.log              # 当天 14 点的日志
+grep "2026-06-07" app.log | grep "ERROR"   # 当天所有错误
+
+# 统计错误数量
+grep -c "ERROR" app.log
+
+# 统计每小时错误分布
+grep "ERROR" app.log | awk '{print $2}' | cut -c1-2 | sort | uniq -c
+
+# 找出最频繁的错误
+grep "ERROR" app.log | awk '{print $5}' | sort | uniq -c | sort -rn | head -10
+```
+
+### 8.4 多文件日志分析
+
+```bash
+# 多文件搜索
+grep "OrderException" /var/log/app/*.log
+
+# 跨日切割的日志（如 app.log、app.log.2026-06-06）
+grep "ERROR" app.log*
+
+# 压缩日志查询（无需解压）
+zgrep "ERROR" app.log.gz
+zcat app.log.gz | grep "ERROR"
+```
+
+### 8.5 完整排错套路
+
+测试反馈线上某接口报错，排查流程：
+
+```bash
+# Step 1：定位错误时间附近的日志
+cd /opt/app/logs
+tail -n 1000 app.log | grep "ERROR"
+
+# Step 2：找到具体异常堆栈
+grep -A 30 "OrderException" app.log | head -100
+
+# Step 3：根据 traceId 串起整条链路
+grep "traceId=abc123" app.log
+
+# Step 4：统计该错误是否影响其他用户
+grep -c "OrderException" app.log
+
+# Step 5：查看错误的时间分布
+grep "OrderException" app.log | awk '{print $1, $2}' | head -20
+```
+
+---
+
+## 九、进程与服务管理
+
+### 9.1 查看进程
+
+```bash
+# 查看所有进程
+ps -ef
+ps aux
+```
+
+```
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.1 168216 11540 ?        Ss   Jun01   0:05 /sbin/init
+root       532  0.0  0.2 217464 18320 ?        Ss   Jun01   0:12 /usr/sbin/sshd
+nginx      891  0.2  0.5 524288 43648 ?        S    09:00   0:30 nginx: worker process
+mysql      923  1.5  8.2 1856512 671744 ?      Sl   Jun01  45:12 /usr/sbin/mysqld
+testuser  2104  0.0  0.0  15536  3420 pts/0    Ss   10:00   0:00 -bash
+testuser  2356  0.0  0.0   8816   640 pts/0    R+   14:30   0:00 ps aux
+```
+
+```bash
+# 查找特定进程
+ps -ef | grep nginx
+ps -ef | grep java | grep -v grep   # 排除 grep 自身
+
+# 树状显示
+pstree
+pstree -p              # 显示 PID
+
+# 动态查看（按 CPU 排序）
+top
+# top 内快捷键：
+# P  按 CPU 排序
+# M  按内存排序
+# k  杀进程（输入 PID）
+# q  退出
+
+# 增强版 top（更友好）
+htop                   # 需安装：yum install htop
+```
+
+### 9.2 杀进程
+
+```bash
+kill PID               # 发送 TERM 信号（友好退出）
+kill -9 PID            # 强制杀死
+kill -15 PID           # 同 kill PID
+killall nginx          # 按名称杀
+pkill -f "java.*MyApp" # 按命令行匹配杀
+```
+
+**测试场景：**
+
+```bash
+# 找到并杀死 Java 进程
+ps -ef | grep java | grep -v grep | awk '{print $2}' | xargs kill -9
+
+| 部分 | 含义 |
+|------|------|
+| `ps -ef` | 列出所有进程 |
+| `grep java` | 过滤含 java 的行 |
+| `grep -v grep` | 排除 grep 自身（避免误杀） |
+| `awk '{print $2}'` | 提取第 2 列（PID） |
+| `xargs kill -9` | 把 PID 传给 kill -9 强制杀死 |
+
+# 一行命令
+pkill -9 -f "MyApp"
+```
+
+### 9.3 后台运行
+
+```bash
+# 方式 1：nohup + &（推荐，关闭终端后仍运行）
+nohup ./startup.sh > app.log 2>&1 &
+
+> **nohup + 重定向 + & 三件套：**
+> | 部分 | 含义 |
+> |------|------|
+> | `nohup` | 终端关闭后进程不退出（no hang up） |
+> | `> app.log` | 标准输出写入 app.log |
+> | `2>&1` | 标准错误也重定向到标准输出（合并到同一文件） |
+> | `&` | 放到后台运行 |
+
+# 方式 2：& 直接后台（关终端就停）
+./script.sh &
+
+# 查看后台任务
+jobs
+
+# 切回前台
+fg %1                  # 切第 1 个任务
+
+# 切到后台
+Ctrl + Z               # 暂停当前任务
+bg %1                  # 让暂停任务后台运行
+
+# 退出登录后保持运行
+disown -h %1
+```
+
+### 9.4 systemd 服务管理
+
+RHEL/CentOS 7+、CentOS Stream 与 Ubuntu 16+ 使用 systemd 管理服务。
+
+```bash
+# 启动 / 停止 / 重启 / 重载
+systemctl start nginx
+systemctl stop nginx
+systemctl restart nginx
+systemctl reload nginx          # 不中断重载配置
+
+# 查看状态
+systemctl status nginx
+```
+
+```
+● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+     Active: active (running) since Sat 2026-06-07 09:00:15 CST; 5h ago
+    Process: 890 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+   Main PID: 891 (nginx)
+      Tasks: 3 (limit: 11064)
+     Memory: 12.5M
+        CPU: 312ms
+     CGroup: /system.slice/nginx.service
+             ├─891 "nginx: master process /usr/sbin/nginx"
+             ├─892 "nginx: worker process"
+             └─893 "nginx: worker process"
+
+Jun 07 09:00:15 app-server-01 systemd[1]: Started The nginx HTTP and reverse proxy server.
+```
+
+```bash
+# 开机启动
+systemctl enable nginx
+systemctl disable nginx
+
+# 查看所有服务
+systemctl list-units --type=service
+systemctl list-unit-files | grep enabled
+
+# 查看服务日志
+journalctl -u nginx
+journalctl -u nginx -f          # 实时
+journalctl -u nginx --since "2026-06-07 10:00"
+```
+
+### 9.5 老版本服务管理（service / chkconfig）
+
+CentOS 6 等老系统：
+
+```bash
+service nginx start
+service nginx status
+chkconfig nginx on
+```
+
+### 9.6 定时任务（crontab）
+
+```bash
+# 编辑当前用户的定时任务
+crontab -e
+
+# 查看定时任务
+crontab -l
+
+# 删除所有定时任务
+crontab -r
+```
+
+**cron 语法：**
+
+```
+* * * * * command
+│ │ │ │ │
+│ │ │ │ └── 星期几（0-6，0=周日；部分实现支持 7=周日）
+│ │ │ └──── 月份（1-12）
+│ │ └────── 日期（1-31）
+│ └──────── 小时（0-23）
+└────────── 分钟（0-59）
+```
+
+!!! info "兼容性说明"
+    不同 cron 实现对星期字段略有差异：Vixie cron / cronie 同时支持 0 和 7 表示周日；BusyBox 等精简版可能只支持 0-6。安全做法是统一用 0。
+
+**示例：**
+
+```bash
+# 每分钟执行
+* * * * * /opt/script/check.sh
+
+# 每天凌晨 2 点
+0 2 * * * /opt/script/backup.sh
+
+# 每 5 分钟
+*/5 * * * * /opt/script/monitor.sh
+
+# 每天 0 点和 12 点
+0 0,12 * * * /opt/script/sync.sh
+
+# 工作日上午 9 点
+0 9 * * 1-5 /opt/script/report.sh
+```
+
+**测试场景：** 定时执行接口监控、清理测试数据、生成测试报告等。
+
+---
+
+## 十、性能监控
+
+!!! abstract "核心概念"
+    测试人员做性能测试或排查问题时必备的监控命令。
+
+### 10.1 CPU 监控
+
+```bash
+# 实时监控（最常用）
+top
+```
+
+```
+top - 14:30:25 up 7 days,  3:12,  2 users,  load average: 0.52, 0.38, 0.35
+Tasks: 187 total,   1 running, 186 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  5.0 us,  2.0 sy,  0.0 ni, 92.0 id,  1.0 wa,  0.0 hi,  0.0 si
+MiB Mem :   7892.4 total,   3276.8 free,   2150.4 used,   2465.2 buff/cache
+MiB Swap:   2048.0 total,   2048.0 free,      0.0 used.   5432.1 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+  923 mysql     20   0 1856512 671744  18432 S   1.5   8.3  45:12.34 mysqld
+  891 nginx     20   0  524288  43648   8192 S   0.2   0.5   0:30.17 nginx
+```
+
+```bash
+# 关键指标：
+# load average: 0.52, 0.38, 0.35  -- 1/5/15分钟平均负载
+# %Cpu(s):  92.0 id               -- 空闲CPU（越高越好）
+# %MEM 列                          -- 各进程内存占用
+
+htop                   # 升级版
+
+# 1 秒刷新一次，运行 5 次
+top -d 1 -n 5
+
+# CPU 详细信息
+lscpu
+cat /proc/cpuinfo | grep "model name" | head -1
+cat /proc/cpuinfo | grep "processor" | wc -l    # 核数
+```
+
+**top 输出关键指标：**
+
+- `load average`：1/5/15 分钟平均负载（应小于 CPU 核数）
+- `%us`：用户态 CPU
+- `%sy`：系统态 CPU
+- `%id`：空闲 CPU
+- `%wa`：等待 IO（高表示磁盘瓶颈）
+
+### 10.2 内存监控
+
+```bash
+# 查看内存（推荐）
+free -h
+```
+
+```
+               total        used        free      shared  buff/cache   available
+Mem:           7.7Gi       2.1Gi       3.2Gi       100Mi       2.4Gi       5.3Gi
+Swap:          2.0Gi          0B       2.0Gi
+```
+
+```bash
+# 详细内存信息
+cat /proc/meminfo
+
+# 1 秒刷新
+free -h -s 1
+```
+
+**关键概念：**
+
+- `available`：真正可用内存（关注这个，不是 free）
+- `buff/cache`：缓存（系统会按需释放）
+
+### 10.3 磁盘监控
+
+```bash
+# 磁盘使用率（最常用！）
+df -h
+```
+
+```
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   30G   20G  60% /
+/dev/sdb1       500G  100G  400G  20% /data
+tmpfs           3.9G     0  3.9G   0% /dev/shm
+```
+
+```bash
+# 查看目录大小
+du -sh /var/log               # 单个目录
+du -sh /var/log/*             # 目录内每个子项
+du -h --max-depth=1 /var      # 仅看一级子目录
+du -sh /var/log/* | sort -h   # 按大小排序
+
+# 找大文件
+find / -type f -size +1G 2>/dev/null
+find /var -type f -size +500M -exec ls -lh {} \;
+
+# IO 监控
+iostat -x 1                   # 需安装：yum install sysstat
+# %util 接近 100% 表示磁盘繁忙
+```
+
+**测试场景：** 性能测试前先确认磁盘空间足够，性能测试中监控 IO。
+
+### 10.4 网络监控
+
+**查看网络连接：**
+
+=== "Linux / Mac"
+
+    ```bash
+    netstat -an                                      # 查看所有连接
+    netstat -tlnp                                    # 查看监听端口
+    ss -tlnp                                         # ss 更现代，推荐
+    netstat -an | grep 8080                          # 查看特定端口
+    netstat -ant | grep ESTABLISHED | wc -l          # 统计连接数
+    netstat -ant | awk '{print $6}' | sort | uniq -c | sort -rn   # 连接状态分布
+    ```
+
+=== "Windows"
+
+    ```powershell
+    netstat -an                                      # 查看所有连接
+    netstat -an | findstr 8080                       # 查看特定端口
+    netstat -an | findstr ESTABLISHED | find /c ""   # 统计连接数
+    ```
+
+**参数拆解：**
+
+| 命令 | 参数 | 含义 |
+|------|------|------|
+| `netstat -a` | `-a` (all) | 显示所有连接和监听端口 |
+| `netstat -n` | `-n` (numeric) | 以数字显示地址和端口（不解析域名，速度更快） |
+| `netstat -t` | `-t` (tcp) | 只显示 TCP 连接 |
+| `netstat -p` | `-p` (program) | 显示对应的进程名/ID（需 root 权限） |
+| `netstat -l` | `-l` (listening) | 只显示监听状态的端口 |
+| `ss -tlnp` | 组合 | TCP + 监听 + 数字 + 进程，一条命令看所有监听端口 |
+
+**常用组合速查：**
+
+```bash
+# 谁占了 8080 端口？（测试最常问的问题）
+netstat -anp | grep 8080
+ss -anp | grep 8080
+
+# 当前有多少活跃连接？
+netstat -ant | grep ESTABLISHED | wc -l
+
+# 连接状态分布（排查连接泄漏）
+netstat -ant | awk '{print $6}' | sort | uniq -c | sort -rn
+# 输出示例：
+#   150 ESTABLISHED
+#    12 TIME_WAIT
+#     3 CLOSE_WAIT        ← 如果这个数持续增长，可能是连接泄漏
+
+# 监听端口列表（快速确认服务是否启动）
+ss -tlnp
+# 输出示例：
+# State   Recv-Q  Send-Q  Local Address:Port  Process
+# LISTEN  0       128     0.0.0.0:8080        users:(("java",pid=1234))
+# LISTEN  0       128     0.0.0.0:3306        users:(("mysqld",pid=5678))
+```
+
+**`netstat` vs `ss`：**
+
+| 对比 | `netstat` | `ss` |
+|------|-----------|------|
+| 速度 | 较慢（遍历 /proc） | 快（直接读 netlink） |
+| 推荐度 | 传统，兼容性好 | 现代 Linux 推荐 |
+| 安装 | 通常预装 | 通常预装（iproute2 包） |
+| 参数 | 几乎一致 | 几乎一致 |
+
+**测试实战场景：**
+
+```bash
+# 场景 1：压测前确认端口是否启动
+ss -tlnp | grep 8080
+
+# 场景 2：压测中监控连接数变化
+watch -n 1 'ss -ant | grep ESTABLISHED | wc -l'
+
+# 场景 3：压测后检查是否有连接泄漏（TIME_WAIT / CLOSE_WAIT 堆积）
+ss -ant | awk '{print $1}' | sort | uniq -c | sort -rn
+
+# 场景 4：查某个进程开了多少连接
+ss -anp | grep pid=1234 | wc -l
+```
+
+**实时网络流量：**
+
+```bash
+iftop                          # 需安装，实时显示各连接流量
+nload                          # 简洁版，按网卡显示
+sar -n DEV 1                   # 网卡流量，每秒刷新
+```
+
+### 10.5 系统综合监控
+
+```bash
+# 综合监控（推荐性能测试时用）
+vmstat 1                       # 每秒一次
+# r  b   swpd  free  buff  cache   si  so  bi  bo  in  cs  us sy id wa
+# 关注：r（运行队列）、si/so（swap）、wa（IO等待）
+
+# 详细系统统计（需 sysstat）
+sar -u 1 10                    # CPU
+sar -r 1 10                    # 内存
+sar -d 1 10                    # 磁盘
+sar -n DEV 1 10                # 网络
+
+# 系统负载历史
+sar -q                         # 负载
+sar -u -f /var/log/sa/sa07     # 查看历史数据（7 号）
+```
+
+---
+
+## 十一、网络相关命令
+
+### 11.1 网络测试
+
+```bash
+# ping 测试
+ping baidu.com
+ping -c 4 baidu.com            # 发 4 个包后停止
+
+# 路由跟踪
+traceroute baidu.com
+tracepath baidu.com
+
+# DNS 查询
+nslookup baidu.com
+dig baidu.com                  # 更详细
+host baidu.com
+
+# 测试端口连通性
+telnet 192.168.1.100 8080
+nc -zv 192.168.1.100 8080      # nc 更现代
+nc -zv 192.168.1.100 8000-9000 # 扫描端口范围
+```
+
+### 11.2 查看本机网络
+
+```bash
+# IP 地址
+ip a                           # 新版（推荐）
+ip addr show
+ifconfig                       # 老版（需安装 net-tools）
+
+# 路由表
+ip route
+route -n
+
+# 防火墙
+firewall-cmd --list-all        # RHEL 系发行版常用
+iptables -L                    # iptables
+ufw status                     # Ubuntu
+
+# 开放端口（CentOS）
+firewall-cmd --permanent --add-port=8080/tcp
+firewall-cmd --reload
+```
+
+> **firewall-cmd 两步操作：** `--permanent` 表示写入规则（永久生效），但不会立即生效。必须再执行 `firewall-cmd --reload` 重新加载才能生效。如果去掉 `--permanent` 则立即生效但重启后丢失。
+
+### 11.3 接口调试（curl）
+
+!!! abstract "核心概念"
+    测试人员必会的接口测试命令行工具。
+
+```bash
+# GET 请求
+curl http://api.example.com/user/1
+
+# 显示响应头
+curl -i http://api.example.com/user/1
+```
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 87
+Date: Sat, 07 Jun 2026 06:30:00 GMT
+
+{"id":1,"name":"张三","age":25,"email":"zhang@example.com","city":"北京"}
+```
+
+```bash
+# 仅显示响应头
+curl -I http://api.example.com/user/1
+
+# 详细输出（调试用）
+curl -v http://api.example.com/user/1
+
+# POST JSON
+curl -X POST http://api.example.com/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"test","password":"123456"}'
+
+# POST 表单
+curl -X POST http://api.example.com/login \
+  -d "username=test&password=123456"
+
+# 带 Header
+curl -H "Authorization: Bearer eyJhbGc..." \
+     -H "X-Request-Id: abc123" \
+     http://api.example.com/user
+
+# 保存响应到文件
+curl -o response.json http://api.example.com/data
+
+# 下载文件
+curl -O http://example.com/file.zip
+
+# 跟随重定向
+curl -L http://example.com
+
+# 跳过 SSL 校验（自签名证书）
+curl -k https://192.168.1.100/api
+
+# 上传文件
+curl -X POST http://api.example.com/upload \
+  -F "file=@/path/to/file.jpg" \
+  -F "name=test"
+
+# 测试接口响应时间
+curl -o /dev/null -s -w "HTTP: %{http_code}\nTotal: %{time_total}s\nDNS: %{time_namelookup}s\nConnect: %{time_connect}s\n" \
+  http://api.example.com/test
+```
+
+**curl 参数拆解：**
+
+| 参数 | 含义 |
+|------|------|
+| `-i` | 显示响应头 + 响应体 |
+| `-I` | 只显示响应头（HEAD 请求） |
+| `-v` | 详细模式，显示完整的握手和请求过程（调试用） |
+| `-X POST` | 指定请求方法（GET/POST/PUT/DELETE） |
+| `-H "..."` | 添加请求头（如 `Content-Type`、`Authorization`） |
+| `-d "..."` | 发送请求体数据（POST/PUT 时用） |
+| `-F "key=@file"` | 表单文件上传（`@` 后跟文件路径） |
+| `-o file` | 保存响应到文件（自己命名） |
+| `-O` | 保存响应到文件（用原始文件名） |
+| `-L` | 跟随重定向（301/302 自动跳转） |
+| `-k` | 跳过 SSL 证书校验（自签名证书测试用） |
+| `-o /dev/null -s -w` | 丢弃响应、静默、只输出自定义格式（常用于测响应时间） |
+
+**wget 下载工具：**
+
+```bash
+wget http://example.com/file.zip
+wget -c http://example.com/file.zip       # 断点续传
+wget -b http://example.com/file.zip       # 后台下载
+```
+
+> **wget 参数说明：**
+>
+> | 参数 | 含义 |
+> |------|------|
+> | `-c` | 断点续传（大文件下载中断后可从断点继续） |
+> | `-b` | 后台下载（日志写入 `wget-log`） |
+
+### 11.4 抓包工具
+
+```bash
+# tcpdump（命令行抓包）
+tcpdump -i eth0                            # 抓 eth0 网卡
+tcpdump -i any port 8080                   # 抓 8080 端口
+tcpdump -i any host 192.168.1.100          # 抓特定 IP
+tcpdump -i any port 8080 -w capture.pcap   # 保存到文件
+# 抓的 pcap 可用 Wireshark 打开分析
+```
+
+---
+
+## 十二、压缩与解压
+
+### 12.1 tar 命令（最常用）
+
+```bash
+# 打包（不压缩）
+tar -cvf archive.tar dir/         # c 创建，v 显示，f 文件名
+tar -xvf archive.tar              # x 解包
+
+# 打包 + gzip 压缩（最常用）
+tar -czvf archive.tar.gz dir/
+tar -xzvf archive.tar.gz
+
+# 打包 + bzip2 压缩（更高压缩率）
+tar -cjvf archive.tar.bz2 dir/
+tar -xjvf archive.tar.bz2
+
+# 解压到指定目录
+tar -xzvf archive.tar.gz -C /opt/
+
+# 仅查看不解压
+tar -tzvf archive.tar.gz
+```
+
+**记忆口诀：**
+
+- `c` create 创建
+- `x` extract 解压
+- `t` list 列表
+- `z` gzip
+- `j` bzip2
+- `v` verbose 显示过程
+- `f` file 指定文件名
+
+### 12.2 zip / unzip
+
+```bash
+# 压缩
+zip -r archive.zip dir/
+
+# 解压
+unzip archive.zip
+unzip archive.zip -d /opt/        # 解压到指定目录
+
+# 查看不解压
+unzip -l archive.zip
+```
+
+### 12.3 gzip / bzip2
+
+```bash
+# gzip（单文件压缩）
+gzip file.txt                     # 生成 file.txt.gz，原文件消失
+gunzip file.txt.gz                # 解压
+
+# bzip2
+bzip2 file.txt
+bunzip2 file.txt.bz2
+```
+
+---
+
+## 十三、软件包管理
+
+### 13.1 CentOS / RHEL（yum / dnf）
+
+```bash
+# 安装
+yum install nginx
+yum install -y nginx              # 自动确认
+
+# 卸载
+yum remove nginx
+
+# 更新
+yum update                        # 更新所有
+yum update nginx                  # 更新单个
+
+# 搜索
+yum search nginx
+yum list installed                # 已安装的
+yum info nginx                    # 详细信息
+
+# 仓库管理
+yum repolist                      # 列出仓库
+yum-config-manager --add-repo URL
+
+# RHEL 8+ / CentOS Stream 推荐 dnf（用法一致）
+dnf install nginx
+```
+
+### 13.2 Ubuntu / Debian（apt）
+
+```bash
+# 更新索引（首次安装前必做）
+apt update
+
+# 安装
+apt install nginx
+apt install -y nginx
+
+# 卸载
+apt remove nginx
+apt purge nginx                   # 连同配置一起删
+
+# 升级
+apt upgrade                       # 升级所有
+apt upgrade nginx                 # 升级单个
+
+# 搜索
+apt search nginx
+apt list --installed
+apt show nginx
+```
+
+### 13.3 通用安装方式
+
+```bash
+# 二进制压缩包安装（如 JDK）
+tar -xzvf jdk.tar.gz -C /opt/
+# 配置环境变量
+vim /etc/profile
+# 添加：
+# export JAVA_HOME=/opt/jdk
+# export PATH=$JAVA_HOME/bin:$PATH
+source /etc/profile
+
+# rpm 包（CentOS）
+rpm -ivh package.rpm              # 安装
+rpm -qa | grep nginx              # 查询已安装
+rpm -e package                    # 卸载
+
+# deb 包（Ubuntu）
+dpkg -i package.deb
+dpkg -l | grep nginx
+dpkg -r package
+```
+
+---
+
+## 十四、Shell 脚本基础
+
+### 14.1 第一个脚本
+
+创建 `hello.sh`：
+
+```bash
+#!/bin/bash
+# 这是注释
+
+echo "Hello, World!"
+echo "当前用户：$(whoami)"
+echo "当前时间：$(date)"
+```
+
+执行：
+
+```bash
+chmod +x hello.sh
+./hello.sh
+
+# 或
+bash hello.sh
+```
+
+### 14.2 变量
+
+```bash
+#!/bin/bash
+
+# 定义变量（等号两边不能有空格）
+name="测试人员"
+age=25
+
+# 使用变量
+echo "姓名：$name"
+echo "年龄：${age}"
+
+# 命令结果赋值
+today=$(date +%Y-%m-%d)
+files=$(ls /var/log | wc -l)
+
+# 环境变量
+echo $HOME
+echo $PATH
+echo $USER
+
+# 特殊变量
+echo $0    # 脚本名
+echo $1    # 第 1 个参数
+echo $2    # 第 2 个参数
+echo $#    # 参数个数
+echo $@    # 所有参数
+echo $?    # 上条命令的退出状态（0 成功）
+echo $$    # 当前进程 PID
+```
+
+### 14.3 条件判断
+
+```bash
+#!/bin/bash
+
+# 数字比较
+num=10
+if [ $num -gt 5 ]; then
+    echo "大于 5"
+elif [ $num -eq 5 ]; then
+    echo "等于 5"
+else
+    echo "小于 5"
+fi
+
+# 字符串比较
+str="hello"
+if [ "$str" = "hello" ]; then
+    echo "匹配"
+fi
+
+# 文件判断
+if [ -f /etc/passwd ]; then
+    echo "文件存在"
+fi
+```
+
+**常用判断符：**
+
+| 符号 | 含义 |
+|------|------|
+| `-eq` | 等于 |
+| `-ne` | 不等于 |
+| `-gt` | 大于 |
+| `-lt` | 小于 |
+| `-ge` | 大于等于 |
+| `-le` | 小于等于 |
+| `-f` | 文件存在 |
+| `-d` | 目录存在 |
+| `-e` | 文件或目录存在 |
+| `-r` | 可读 |
+| `-w` | 可写 |
+| `-x` | 可执行 |
+| `=` | 字符串相等 |
+| `!=` | 字符串不等 |
+| `-z` | 字符串为空 |
+| `-n` | 字符串非空 |
+
+### 14.4 循环
+
+```bash
+# for 循环
+for i in 1 2 3 4 5; do
+    echo "数字：$i"
+done
+
+# 遍历文件
+for file in /var/log/*.log; do
+    echo "处理：$file"
+done
+
+# C 风格 for
+for ((i=1; i<=5; i++)); do
+    echo $i
+done
+
+# while 循环
+count=1
+while [ $count -le 5 ]; do
+    echo $count
+    count=$((count + 1))
+done
+
+# 读文件每行
+while read line; do
+    echo "$line"
+done < file.txt
+```
+
+### 14.5 函数
+
+```bash
+#!/bin/bash
+
+# 定义函数
+check_service() {
+    local service=$1
+    if systemctl is-active --quiet $service; then
+        echo "$service is running"
+        return 0
+    else
+        echo "$service is NOT running"
+        return 1
+    fi
+}
+
+# 调用函数
+check_service nginx
+check_service mysql
+```
+
+### 14.6 测试人员常用脚本示例
+
+**示例 1：批量 ping 服务器**
+
+```bash
+#!/bin/bash
+servers=("192.168.1.100" "192.168.1.101" "192.168.1.102")
+for server in "${servers[@]}"; do
+    if ping -c 1 -W 1 $server > /dev/null 2>&1; then
+        echo "$server: 通"
+    else
+        echo "$server: 不通"
+    fi
+done
+```
+
+**示例 2：监控接口健康**
+
+```bash
+#!/bin/bash
+url="http://api.example.com/health"
+code=$(curl -o /dev/null -s -w "%{http_code}" $url)
+if [ "$code" = "200" ]; then
+    echo "$(date) - 接口正常"
+else
+    echo "$(date) - 接口异常，状态码：$code"
+    # 这里可以发钉钉/企业微信告警
+fi
+```
+
+**示例 3：清理 N 天前的日志**
+
+```bash
+#!/bin/bash
+log_dir="/opt/app/logs"
+days=7
+find $log_dir -name "*.log.*" -mtime +$days -exec rm -f {} \;
+echo "$(date) - 清理完成"
+```
+
+**示例 4：批量执行命令**
+
+```bash
+#!/bin/bash
+hosts="192.168.1.100 192.168.1.101 192.168.1.102"
+for host in $hosts; do
+    echo "=== $host ==="
+    ssh root@$host "df -h | grep -v tmpfs"
+done
+```
+
+---
+
+## 十五、测试场景实战
+
+### 15.1 场景一：部署被测应用
+
+```bash
+# Step 1：上传安装包
+scp app.tar.gz root@192.168.1.100:/opt/
+
+# Step 2：登录服务器
+ssh root@192.168.1.100
+
+# Step 3：解压
+cd /opt
+tar -xzvf app.tar.gz
+
+# Step 4：修改配置
+cd app
+vim application.yml
+# 或直接 sed 修改
+sed -i 's/127.0.0.1/192.168.1.200/g' application.yml
+
+# Step 5：启动
+nohup java -jar app.jar > app.log 2>&1 &
+
+# Step 6：验证启动成功
+tail -f app.log
+curl http://localhost:8080/health
+```
+
+### 15.2 场景二：性能测试监控
+
+性能测试时，开多个终端窗口监控：
+
+```bash
+# 窗口 1：CPU + 内存
+top
+
+# 窗口 2：磁盘 IO
+iostat -x 1
+
+# 窗口 3：网络流量
+sar -n DEV 1
+
+# 窗口 4：应用日志
+tail -f /opt/app/logs/app.log | grep -E "ERROR|slow"
+
+# 窗口 5：连接数变化
+watch -n 1 'netstat -ant | grep ESTABLISHED | wc -l'
+
+# 窗口 6：JVM 监控（Java 应用）
+jstat -gc <pid> 1000
+```
+
+### 15.3 场景三：排查接口超时
+
+```bash
+# Step 1：确认接口确实超时
+time curl http://api.example.com/order/list
+
+# Step 2：查看应用日志
+tail -f /opt/app/logs/app.log | grep "OrderController"
+
+# Step 3：检查 CPU/内存
+top
+free -h
+
+# Step 4：检查数据库连接数
+netstat -ant | grep 3306 | wc -l
+
+# Step 5：检查依赖服务
+curl -o /dev/null -s -w "%{http_code} %{time_total}s\n" http://downstream/api
+
+# Step 6：查 GC 情况（Java）
+jstat -gcutil <pid> 1000
+
+# Step 7：抓线程栈分析
+jstack <pid> > thread.dump
+```
+
+### 15.4 场景四：测试数据清理
+
+```bash
+#!/bin/bash
+# 清理测试环境数据脚本
+
+# 1. 清理应用日志（保留 3 天）
+find /opt/app/logs -name "*.log.*" -mtime +3 -delete
+
+# 2. 清理临时文件
+rm -rf /tmp/test_*
+
+# 3. 清理上传的测试图片
+rm -rf /data/upload/test_*
+
+# 4. 重置数据库（谨慎！）
+mysql -uroot -p123456 testdb < /opt/scripts/reset.sql
+
+# 5. 清空 Redis 缓存
+redis-cli -h 192.168.1.100 -p 6379 FLUSHDB
+
+echo "$(date) - 测试数据清理完成"
+```
+
+### 15.5 场景五：日志关键信息提取
+
+```bash
+# 提取所有 traceId
+grep -oE 'traceId=[a-z0-9]+' app.log | sort -u
+
+# 提取所有出错的接口
+grep "ERROR" app.log | awk '{print $7}' | sort | uniq -c | sort -rn
+
+# 提取最慢的 10 个接口
+grep "slow" app.log | awk -F'cost=' '{print $2}' | sort -rn | head -10
+
+# 统计每分钟的请求数（推算 QPS）
+awk '{print $1, substr($2,1,5)}' access.log | sort | uniq -c
+
+# 统计 HTTP 状态码
+awk '{print $9}' access.log | sort | uniq -c | sort -rn
+
+# 找出访问量 Top 10 的 URL
+awk '{print $7}' access.log | sort | uniq -c | sort -rn | head -10
+
+# 找出请求量 Top 10 的 IP
+awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -10
+```
+
+### 15.6 场景六：远程批量操作
+
+```bash
+# 通过 SSH 批量查看多台服务器状态
+for ip in 192.168.1.{100..110}; do
+    echo "=== $ip ==="
+    ssh root@$ip "uptime; df -h /; free -h | head -2"
+    echo ""
+done
+
+# 批量重启服务
+for ip in 192.168.1.{100..110}; do
+    echo "重启 $ip 的 nginx"
+    ssh root@$ip "systemctl restart nginx && systemctl status nginx --no-pager"
+done
+```
+
+---
+
+## 十六、常见问题排查
+
+### 16.1 磁盘满了
+
+```bash
+# Step 1：查看磁盘使用
+df -h
+
+# Step 2：找占用最大的目录
+du -h --max-depth=1 / 2>/dev/null | sort -h
+
+> **命令拆解：** `du` 统计磁盘占用，`-h` 人类可读格式（KB/MB/GB），`--max-depth=1` 只统计一层子目录，`2>/dev/null` 把错误信息丢弃（如权限不足），`sort -h` 按大小排序。
+
+# Step 3：找大文件
+find / -type f -size +1G 2>/dev/null
+
+# Step 4：常见占用大户
+du -sh /var/log/*
+du -sh /tmp/*
+du -sh /opt/*/logs/*
+
+# Step 5：清理日志
+> /var/log/app.log              # 清空但不删文件（推荐，避免应用句柄失效）
+
+# 注意：rm 删除大文件后磁盘可能不释放
+# 因为进程还持有文件句柄，需重启进程或：
+lsof | grep deleted             # 找出已删除但被持有的文件
+```
+
+### 16.2 服务起不来
+
+```bash
+# Step 1：查看错误日志
+journalctl -u nginx -n 50
+tail -100 /var/log/nginx/error.log
+
+# Step 2：检查端口占用
+netstat -anp | grep 8080
+lsof -i:8080
+
+# Step 3：检查配置文件
+nginx -t                        # nginx 配置测试
+
+# Step 4：检查权限
+ls -l /opt/app/
+ls -l /var/log/
+
+# Step 5：检查 SELinux（CentOS）
+getenforce
+setenforce 0                    # 临时关闭测试
+```
+
+### 16.3 内存爆了
+
+```bash
+# 看内存使用排行
+ps aux --sort=-%mem | head -10
+
+# 看 OOM 日志
+dmesg | grep -i "out of memory"
+grep -i "killed process" /var/log/messages
+
+# 释放缓存（谨慎）
+sync && echo 3 > /proc/sys/vm/drop_caches
+```
+
+### 16.4 CPU 飙高
+
+```bash
+# 找最耗 CPU 的进程
+top -o %CPU
+
+# 看 Java 进程内哪个线程耗 CPU
+top -H -p <pid>
+# 记下 TID（线程 ID），转 16 进制
+printf "%x\n" <tid>
+# 用 jstack 查看
+jstack <pid> | grep -A 30 <16 进制 tid>
+```
+
+### 16.5 网络不通
+
+```bash
+# Step 1：ping
+ping 192.168.1.100
+
+# Step 2：端口
+telnet 192.168.1.100 8080
+nc -zv 192.168.1.100 8080
+
+# Step 3：防火墙
+firewall-cmd --list-all
+iptables -L -n
+
+# Step 4：路由
+traceroute 192.168.1.100
+ip route
+
+# Step 5：DNS
+nslookup baidu.com
+cat /etc/resolv.conf
+```
+
+### 16.6 中文乱码
+
+```bash
+# 查看当前编码
+locale
+
+# 临时设置
+export LANG=zh_CN.UTF-8
+
+# 永久设置（仅影响交互 shell）
+echo "export LANG=zh_CN.UTF-8" >> ~/.bashrc
+source ~/.bashrc
+
+# 系统级永久设置（影响所有登录、cron、systemd）
+# CentOS/RHEL：
+# sudo localectl set-locale LANG=zh_CN.UTF-8
+# Ubuntu/Debian：
+# sudo update-locale LANG=zh_CN.UTF-8
+```
+
+!!! info "兼容性说明"
+    bashrc 仅对交互式 shell 生效，cron 任务、systemd 服务不受影响。要全局生效用 `localectl` / `update-locale`，或修改 `/etc/locale.conf`。
+
+### 16.7 找不到命令
+
+```bash
+# 查看命令是否存在
+which ls
+type ls
+
+# 查看 PATH
+echo $PATH
+
+# 添加到 PATH（临时）
+export PATH=$PATH:/opt/app/bin
+
+# 永久添加
+echo 'export PATH=$PATH:/opt/app/bin' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## 十七、进阶建议
+
+### 17.1 学习路径
+
+```
+基础命令 → 文本三剑客 → 日志分析 → 进程服务 → 性能监控 
+→ Shell 脚本 → 自动化运维 → Docker → Kubernetes
+```
+
+### 17.2 配套工具推荐
+
+| 工具 | 用途 |
+|------|------|
+| **Tmux** | 终端复用，断网保持会话 |
+| **Zsh + Oh-my-zsh** | 强化版 shell |
+| **fzf** | 命令行模糊查找 |
+| **bat** | 增强版 cat |
+| **ncdu** | 交互式磁盘分析 |
+| **lazygit** | Git 终端 UI |
+| **Ansible** | 批量配置管理 |
+| **Docker** | 容器化测试环境 |
+
+### 17.3 常用速查表
+
+测试人员每天可能用到的 Top 20 命令：
+
+```bash
+ls          # 列文件
+cd          # 切目录
+pwd         # 当前路径
+cat         # 看文件
+tail -f     # 跟踪日志
+grep        # 过滤
+ps -ef      # 查进程
+top         # 监控
+df -h       # 磁盘
+free -h     # 内存
+netstat     # 网络
+curl        # 接口测试
+vim         # 编辑
+chmod       # 权限
+chown       # 所有者
+find        # 查文件
+tar         # 压缩
+scp         # 传文件
+ssh         # 登录
+systemctl   # 服务
+```
+
+### 17.4 最佳实践
+
+1. **登录服务器前确认是哪台**：测试环境和生产环境的命令是危险的
+2. **rm 前先 ls**：`rm -rf` 前用 `ls` 确认路径
+3. **修改配置前先备份**：`cp config.yml config.yml.bak`
+4. **生产环境只读**：测试人员通常没有生产 write 权限，遵守规范
+5. **善用 history**：复杂命令拷贝复用，避免敲错
+6. **不会的命令先 `--help`**：而不是上来就执行
+7. **测试脚本先在测试机跑**：脚本可能误删数据
+
+---
+
+## 附录：参考资料
+
+- 鸟哥的 Linux 私房菜：`http://linux.vbird.org/`
+- Linux 命令大全：`https://man.linuxde.net/`
+- ExplainShell（解释命令）：`https://explainshell.com/`
+- TLDR（命令速查）：`https://tldr.sh/`
+
+---
+
+!!! info "文档说明"
+    本教程以 RHEL 系发行版与 Ubuntu LTS 的通用命令为主，多数命令在其他主流发行版通用；老项目中的 CentOS 7 命令需结合系统版本确认。
+
+!!! warning "测试纪律"
+    操作生产环境务必经过申请审批，禁止在生产环境执行未经评审的 Shell 脚本，禁止使用 root 账户进行日常测试操作。`rm -rf` 命令使用前务必三思。
+
+---
+
+## 动手任务：用命令行断定一次「有人爆破 SSH 登录」
+
+> 这是本教程的收尾练习。请**独立完成**，不要先看参考答案。目标不是"把命令敲一遍"，而是**用日志证明你的判断**。
+
+### 任务背景
+
+测试环境所在服务器 `web01` 上线前做安全检查，运维丢给你两份日志，问你一句话："**这台机器昨晚有没有被暴力破解？破没破进来？**"
+
+你需要在**不登录服务器后台、不看监控大盘**的前提下，只靠命令行把这件事说清楚：攻击从什么时候开始、目标了哪些账号、有没有一个账号被真正登录成功、以及同时段业务请求是否受影响。
+
+### 任务数据
+
+在自己机器的测试目录下创建 `~/lab/`，把下面两份日志分别保存为 `auth.log` 和 `access.log`（用 `cat > 文件名 << 'EOF' ... EOF` 或 `vi` 粘贴均可，**内容要一字不差**）。
+
+**`auth.log`（ssh 登录日志，`/var/log/secure` 或 `/var/log/auth.log` 的片段）：**
+
+```text
+Jun  7 03:12:41 web01 sshd[2141]: Failed password for invalid user admin from 203.0.113.45 port 51422 ssh2
+Jun  7 03:12:41 web01 sshd[2141]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=203.0.113.45
+Jun  7 03:12:43 web01 sshd[2141]: Failed password for invalid user admin from 203.0.113.45 port 51422 ssh2
+Jun  7 03:12:45 web01 sshd[2141]: Failed password for invalid user admin from 203.0.113.45 port 51422 ssh2
+Jun  7 03:12:47 web01 sshd[2141]: Failed password for invalid user admin from 203.0.113.45 port 51422 ssh2
+Jun  7 03:12:52 web01 sshd[2144]: Accepted password for testuser from 192.168.1.30 port 49812 ssh2
+Jun  7 03:13:01 web01 sshd[2150]: Failed password for invalid user admin from 203.0.113.45 port 51422 ssh2
+Jun  7 03:13:04 web01 sshd[2150]: Failed password for invalid user oracle from 203.0.113.45 port 51500 ssh2
+Jun  7 03:13:08 web01 sshd[2150]: Failed password for invalid user oracle from 203.0.113.45 port 51500 ssh2
+Jun  7 03:13:11 web01 sshd[2150]: Failed password for invalid user oracle from 203.0.113.45 port 51500 ssh2
+Jun  7 03:13:15 web01 sshd[2150]: Failed password for invalid user oracle from 203.0.113.45 port 51500 ssh2
+Jun  7 03:13:20 web01 sshd[2156]: Accepted password for testuser from 192.168.1.30 port 49830 ssh2
+Jun  7 03:14:02 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:06 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:09 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:12 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:18 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:22 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:26 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:30 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:33 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:37 web01 sshd[2160]: Failed password for invalid user deploy from 203.0.113.45 port 51610 ssh2
+Jun  7 03:14:41 web01 sshd[2160]: Accepted password for testuser from 192.168.1.30 port 49877 ssh2
+Jun  7 03:15:05 web01 sshd[2172]: Failed password for invalid user jenkins from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:09 web01 sshd[2172]: Failed password for invalid user jenkins from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:12 web01 sshd[2172]: Failed password for invalid user jenkins from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:14 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:17 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:19 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:21 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:24 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+Jun  7 03:15:41 web01 sshd[2180]: Accepted password for testuser from 192.168.1.30 port 49901 ssh2
+```
+
+**`access.log`（Nginx 访问日志，同一时间窗）：**
+
+```text
+192.168.1.77 - - [07/Jun/2026:03:11:02 +0800] "GET /api/v1/order/list HTTP/1.1" 499 0 "-" "Apache-HttpClient/4.5.13 (Java/1.8.0_291)"
+192.168.1.30 - - [07/Jun/2026:03:11:08 +0800] "GET /api/v1/order/list HTTP/1.1" 200 1024 "-" "Mozilla/5.0"
+192.168.1.30 - - [07/Jun/2026:03:11:11 +0800] "GET /api/v1/user/profile HTTP/1.1" 200 512 "-" "Mozilla/5.0"
+203.0.113.45 - - [07/Jun/2026:03:12:41 +0800] "GET /api/v1/user/profile HTTP/1.1" 404 128 "-" "curl/7.68.0"
+192.168.1.77 - - [07/Jun/2026:03:12:55 +0800] "POST /api/v1/order/create HTTP/1.1" 499 0 "-" "Apache-HttpClient/4.5.13 (Java/1.8.0_291)"
+203.0.113.45 - - [07/Jun/2026:03:13:02 +0800] "GET /api/v1/user/profile HTTP/1.1" 401 96 "-" "curl/7.68.0"
+192.168.1.30 - - [07/Jun/2026:03:13:30 +0800] "POST /api/v1/order/create HTTP/1.1" 200 768 "-" "Mozilla/5.0"
+203.0.113.45 - - [07/Jun/2026:03:13:40 +0800] "GET /admin/login.html HTTP/1.1" 404 128 "-" "curl/7.68.0"
+192.168.1.77 - - [07/Jun/2026:03:14:01 +0800] "POST /api/v1/pay/callback HTTP/1.1" 499 0 "-" "Apache-HttpClient/4.5.13 (Java/1.8.0_291)"
+203.0.113.45 - - [07/Jun/2026:03:14:20 +0800] "GET /api/v1/user/profile HTTP/1.1" 401 96 "-" "curl/7.68.0"
+192.168.1.30 - - [07/Jun/2026:03:14:45 +0800] "GET /api/v1/order/list HTTP/1.1" 200 2048 "-" "Mozilla/5.0"
+203.0.113.45 - - [07/Jun/2026:03:15:10 +0800] "GET /api/v1/user/profile HTTP/1.1" 401 96 "-" "curl/7.68.0"
+192.168.1.77 - - [07/Jun/2026:03:15:33 +0800] "POST /api/v1/order/create HTTP/1.1" 499 0 "-" "Apache-HttpClient/4.5.13 (Java/1.8.0_291)"
+192.168.1.55 - - [07/Jun/2026:03:16:02 +0800] "GET /api/v1/product/detail?id=100 HTTP/1.1" 200 1536 "-" "Mozilla/5.0"
+192.168.1.55 - - [07/Jun/2026:03:16:05 +0800] "GET /api/v1/product/detail?id=101 HTTP/1.1" 200 1536 "-" "Mozilla/5.0"
+192.168.1.77 - - [07/Jun/2026:03:16:40 +0800] "POST /api/v1/pay/callback HTTP/1.1" 499 0 "-" "Apache-HttpClient/4.5.13 (Java/1.8.0_291)"
+```
+
+!!! warning "先读一遍数据再动手"
+    `auth.log` 里既有失败也有成功，还有一行 `pam_unix` 的干扰行；`access.log` 里 499 和 401/404 混在一起。**别用 `awk '{print $N}'` 硬取列号**——ssh 日志里带 `invalid user` 和不带的两种行，字段数是**不一样**的，取错列会得到 `admin`、`from` 这种词。想清楚用哪种匹配方式最稳。
+
+### 任务要求
+
+请依次完成，并**保留每条命令和输出**：
+
+1. **确定攻击时间窗**：从 `auth.log` 里筛出所有失败登录，给出失败的**最早时间**、**最晚时间**和**总次数**；再画出**每分钟失败次数**的分布，指出攻击最密集的那一分钟。
+
+2. **判断攻击强度和目标**：统计发起失败登录的**源 IP** 有几个、各多少次；统计被尝试的**用户名**及次数；并回答：被尝试次数最多的账号是哪个？root 被尝试了几次？
+
+3. **交叉验证"有没有破进来"**：在 `auth.log` 里查出所有**登录成功**的记录，回答两个问题——攻击源 IP 有没有一次成功登录？现场真正的正常登录来自哪个 IP、用的是哪个账号？然后去 `access.log` 里看该攻击 IP 触发了哪些请求、返回了什么状态码，据此判断它是"人肉在试探"还是"自动化脚本在扫描"。
+
+4. **排除干扰、给出可复用产出**：`access.log` 里有另外一类异常（同一个客户端 IP 反复出现 `499`），请把它**单独拎出来**说明是什么问题、和暴力破解有没有关系；最后写一条**一条命令搞定**的"失败/成功对比"流水线，能在任何一台机器上快速判断"是否存在只失败不成功的可疑 IP"。
+
+### 提交物
+
+| 产出 | 要求 |
+|------|------|
+| 命令清单 | 4 个问题对应的完整命令，可直接复制执行；至少包含 1 条 `grep` 组合、1 条 `awk`、1 条 `sort \| uniq -c \| sort -rn` |
+| 结果输出 | 每条命令的真实输出（或截图），含时间戳与计数数字 |
+| 结论 | 用 3-5 句话说明：是外部攻击还是内部环境问题，影响范围多大，有没有账号失陷，建议怎么处置 |
+
+### 完成标准
+
+- [ ] 能说清"为什么 ssh 日志里不能用固定列号取 IP"，并用一条对两种行都成立的命令提取出源 IP
+- [ ] 输出的攻击时间窗、总次数、最密集分钟三个数字与日志内容对得上，能被复核
+- [ ] 区分开"失败登录次数多"和"账号被攻破"——用成功登录记录作为唯一证据，而不是靠推测
+- [ ] 把 `499` 单独归因，没有把它和暴力破解混为一谈
+- [ ] 结论里有具体证据（时间戳、IP、次数）支撑，不是"可能存在安全风险"这种模糊表述
+- [ ] 第 4 题写出的那条对比流水线能直接放进日常巡检（换个日志路径就能用）
+
+??? tip "参考答案与思路（先自己做完再看）"
+
+    **第 1 题：确定攻击时间窗**
+
+    ```bash
+    cd ~/lab
+
+    # 失败登录总数
+    grep -c "Failed password" auth.log
+
+    # 最早 / 最晚时间（ssh 日志时间在"第 3 列"）
+    grep "Failed password" auth.log | awk '{print $3}' | sort | head -1
+    grep "Failed password" auth.log | awk '{print $3}' | sort | tail -1
+    ```
+
+    预期结果：`27`；最早 `03:12:41`，最晚 `03:15:24`。
+
+    **注意 `pam_unix` 那行**：它不含 `Failed password`，所以 `grep -c` 得到的是 27，而不是文件总行数 32。这正是"先过滤再统计"的意义。
+
+    ```bash
+    # 每分钟失败次数：取时间字段前 5 位（HH:MM）
+    grep "Failed password" auth.log | awk '{print $3}' | cut -c1-5 | sort | uniq -c
+    ```
+
+    预期结果：
+
+    ```text
+          4 03:12
+          5 03:13
+         10 03:14
+          8 03:15
+    ```
+
+    最密集的一分钟是 **03:14，共 10 次**（4 分钟内 27 次失败，约每 9 秒一次，已经是明显的自动化爆破节奏，而不是人工输错密码）。
+
+    **第 2 题：攻击强度和目标**
+
+    ```bash
+    # 失败登录的源 IP（用 -oE 只截取 IP，不依赖列号）
+    grep "Failed password" auth.log | grep -oE 'from [0-9.]+' | awk '{print $2}' | sort | uniq -c | sort -rn
+
+    # 被尝试的用户名（只统计 invalid user，即"账号不存在"的试探）
+    grep "Failed password" auth.log | grep -oE 'invalid user [a-z]+' | awk '{print $3}' | sort | uniq -c | sort -rn
+    ```
+
+    预期结果：源 IP 只有 **1 个**——`203.0.113.45`，27 次全部来自它：
+
+    ```text
+         27 203.0.113.45
+    ```
+
+    用户名分布（`invalid user` 共 22 次）：
+
+    ```text
+         10 deploy
+          5 admin
+          4 oracle
+          3 jenkins
+    ```
+
+    被尝试最多的账号是 **`deploy`（10 次）**——说明攻击者按"运维常用账号"字典在撞。
+
+    ```bash
+    # root 是真实存在的账号，日志里不带 "invalid user"，要单独查
+    grep "Failed password for root" auth.log
+    ```
+
+    预期结果：**5 条**，时间集中在 `03:15:14` ~ `03:15:24` 这 10 秒内：
+
+    ```text
+    Jun  7 03:15:14 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+    Jun  7 03:15:17 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+    Jun  7 03:15:19 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+    Jun  7 03:15:21 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+    Jun  7 03:15:24 web01 sshd[2172]: Failed password for root from 203.0.113.45 port 51720 ssh2
+    ```
+
+    **关键细节**：这 5 行的 PID 都是 `2172`、端口都是 `51720`——同一个 ssh 连接、同一条链路，连续试了 5 次 root。如果 PID 各不相同，那才是"多个连接并发爆破"，严重程度更高。这个区别建议写进结论。
+
+    **第 3 题：交叉验证有没有破进来**
+
+    ```bash
+    # 所有登录成功的记录
+    grep "Accepted password" auth.log
+
+    # 直接回答：攻击 IP 有没有成功过？（无输出 = 没有）
+    grep "Accepted password" auth.log | grep "203.0.113.45"
+    ```
+
+    预期结果：4 条成功记录，**全部来自 `192.168.1.30`、账号都是 `testuser`**：
+
+    ```text
+    Jun  7 03:12:52 web01 sshd[2144]: Accepted password for testuser from 192.168.1.30 port 49812 ssh2
+    Jun  7 03:13:20 web01 sshd[2156]: Accepted password for testuser from 192.168.1.30 port 49830 ssh2
+    Jun  7 03:14:41 web01 sshd[2160]: Accepted password for testuser from 192.168.1.30 port 49877 ssh2
+    Jun  7 03:15:41 web01 sshd[2180]: Accepted password for testuser from 192.168.1.30 port 49901 ssh2
+    ```
+
+    第二条命令**没有任何输出**，这就是最有力的证据：**攻击者从头到尾没登录成功过一次**。
+
+    ```bash
+    # 按源 IP 汇总成功登录
+    grep "Accepted password" auth.log | grep -oE 'from [0-9.]+' | awk '{print $2}' | sort | uniq -c
+    ```
+
+    预期结果：
+
+    ```text
+          4 192.168.1.30
+    ```
+
+    再去 `access.log` 看这个攻击 IP 干了什么：
+
+    ```bash
+    grep "^203.0.113.45 " access.log
+
+    # 只看它触发的状态码
+    grep "^203.0.113.45 " access.log | awk '{print $9}' | sort | uniq -c | sort -rn
+    ```
+
+    预期结果：5 条请求，状态码是 `401 × 3` 和 `404 × 2`：
+
+    ```text
+          3 401
+          2 404
+    ```
+
+    访问的路径只有 `/api/v1/user/profile`（401，没带凭证）和 `/admin/login.html`（404，根本不存在的后台页面）。UA 全部是 `curl/7.68.0`。
+
+    **判断**：这不是"人在试探"，而是**自动化脚本**在打——理由有三：UA 是 `curl` 而非浏览器；请求固定 5 条、间隔 15~40 秒呈机械节奏；且**探测后台路径 `/admin/login.html`**（404 说明压根没有这个页面，是字典式扫描的特征）。`auth.log` 里 4 分钟内 27 次失败也印证了同样节奏。
+
+    **第 4 题：排除干扰 + 可复用产出**
+
+    先看 `499` 是谁产生的：
+
+    ```bash
+    grep -c '" 499 ' access.log
+    grep '" 499 ' access.log | awk '{print $1}' | sort | uniq -c
+    grep '" 499 ' access.log
+    ```
+
+    预期结果：5 条 `499`，**全部来自 `192.168.1.77`**，且 UA 是 `Apache-HttpClient/4.5.13`（压测/自动化客户端），集中在 `03:11:02` ~ `03:16:40`：
+
+    ```text
+          5 192.168.1.77
+    ```
+
+    **结论：`499` 和暴力破解无关。** `499` 是 Nginx 自定义状态码，含义是"**客户端在服务端返回响应前主动断开了连接**"，典型原因是压测客户端请求超时后自己掐断，属于**被测服务的性能问题**，不是安全事件。判定依据是三条硬证据：IP 完全不同（`192.168.1.77` vs `203.0.113.45`）、时间上互相穿插而非同步、且 `499` 那几秒业务请求仍在正常返回 `200`（`grep '" 200 ' access.log | wc -l` 为 6）。
+
+    最后是可复用的"失败/成功对比"流水线——**一条命令**找出"只失败、不成功"的可疑 IP：
+
+    ```bash
+    grep -oE 'from [0-9.]+' auth.log | awk '{print $2}' | sort | uniq -c \
+      | awk '{print $2, $1}' | while read ip fails; do
+          succ=$(grep "Accepted password" auth.log | grep -c " from $ip ");
+          echo "$ip  失败=$fails  成功=$succ";
+      done
+    ```
+
+    在这份日志上的输出：
+
+    ```text
+    192.168.1.30  失败=0  成功=4
+    203.0.113.45  失败=27  成功=0
+    ```
+
+    判据很直接：**失败数 ≥ 5 且成功数 = 0 的 IP，就是要封禁的 IP**。`203.0.113.45` 命中，`192.168.1.30` 是正常测试机。
+
+    日常巡检时把它套进一条更短的版本即可（先取 Top 攻击源，再逐个核对）：
+
+    ```bash
+    for ip in $(grep "Failed password" /var/log/secure | grep -oE 'from [0-9.]+' | awk '{print $2}' | sort -u); do
+        f=$(grep -c "Failed password.*from $ip " /var/log/secure)
+        s=$(grep -c "Accepted password.*from $ip " /var/log/secure)
+        echo "$ip 失败=$f 成功=$s"
+    done
+    ```
+
+    处置建议：`203.0.113.45` 加入 `firewalld`/`fail2ban` 黑名单；确认 `sshd` 已关闭 root 远程登录（`PermitRootLogin no`）；`deploy`、`admin` 这类高频试探账号如果真实存在，立即改强密码并检查是否被加入密钥登录白名单。
+
+    参考做法：
+
+    ```bash
+    # 只读核对，不要在生产直接执行
+    sshd -T | grep -i permitrootlogin
+    grep -E "^deploy|^admin" /etc/passwd
+
+    # 确认后封 IP（示例，二选一）
+    firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address=203.0.113.45 reject'
+    firewall-cmd --reload
+    ```
+
+---
+
+## 下一步建议
+
+<div class="tutorial-next-steps" markdown="1">
+
+### 完成检查
+
+学完本教程后，检查自己是否能做到：
+
+- [ ] 能使用基本文件操作命令（ls、cd、pwd、mkdir、rm、cp、mv）
+- [ ] 能使用文件查看命令（cat、head、tail、less、more）
+- [ ] 能使用 grep 搜索日志
+- [ ] 能使用 ps、top 查看进程
+- [ ] 能使用 netstat、lsof 查看端口
+- [ ] 能使用 tail -f 实时查看日志
+
+### 推荐下一步
+
+根据你的学习进度，选择下一步：
+
+1. **如果你想继续学工具**：学习 [Git 版本控制](Git版本控制教程-软件测试版.md)，掌握代码协作
+2. **如果你想学容器化**：学习 [Docker 容器](Docker容器教程-软件测试版.md)，掌握环境搭建
+3. **如果你想进入下一阶段**：学习 [Postman 接口测试](Postman接口测试教程-软件测试版.md)，掌握接口调试
+
+### 阶段测验
+
+完成教程后，建议做 [Linux 基础测验](Linux基础测验.md) 检验学习效果。
+
+### 通关检查
+
+完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。
+
+</div>

@@ -1,0 +1,820 @@
+---
+description: Fiddler 抓包教程，HTTP 抓包分析、Mock 和弱网模拟。
+---
+# Fiddler 抓包教程（软件测试人员专用）
+
+> 本教程面向软件测试工程师，结合实际测试场景讲解 Fiddler 的使用方法，覆盖从入门安装到高级技巧的全部内容。
+
+---
+
+## 前置要求
+
+| 项目 | 要求 | 获取方式 |
+|------|------|----------|
+| 网络基础（HTTP 协议） | 了解请求方法、状态码、请求头与响应体 | [网络知识教程-软件测试版](../工具操作/网络知识教程-软件测试版.md) |
+
+---
+
+## 新手导读
+
+抓包的核心不是“看到很多请求”，而是从请求里找到业务动作对应的接口。新手第一遍只需要学会看请求方法、URL、请求参数、响应结果和状态码。
+
+建议练习路径：
+
+1. 打开一个网页或 App 操作登录。
+2. 在 Fiddler 里找到登录请求。
+3. 查看请求参数里有没有账号、密码或 Token。
+4. 查看响应里是否有业务 code、message、data。
+5. 把这个请求复制到 Postman 里重新发送。
+
+如果开启 HTTPS 解密后页面打不开，优先检查证书是否安装正确、代理是否恢复默认。
+
+### 版本与维护说明
+
+| 项目 | 说明 |
+|------|------|
+| 适用工具 | Fiddler Classic、Fiddler Everywhere、Charles、浏览器 DevTools |
+| 使用建议 | Windows 新手可先学 Fiddler Classic，跨平台或移动端团队可对照 Charles |
+| 更新提醒 | 抓 HTTPS、安装证书、移动端代理步骤会随系统版本变化，实操前先确认当前系统权限和证书状态 |
+
+---
+## 一、Fiddler 简介
+
+### 1.1 什么是 Fiddler
+
+Fiddler 是一款免费 Web 调试代理工具，由 Eric Lawrence 创作（2003 年），2012 年被 Telerik 收购（Telerik 后并入 Progress Software）。它工作在 **HTTP/HTTPS 协议层**，通过本地代理（默认端口 8888）拦截客户端与服务器之间的所有通信。
+
+!!! info "版本说明"
+    本文档介绍的是 Fiddler Classic（Windows 免费版，维护节奏放缓但仍有大量用户）。Telerik 同时提供 Fiddler Everywhere（跨平台付费版）和 FiddlerCap（抓包录制工具）。
+
+### 1.2 工作原理
+
+```
+正常请求：客户端 ──────────→ 服务器
+                
+使用 Fiddler：客户端 ──→ Fiddler(127.0.0.1:8888) ──→ 服务器
+                          ↑
+                       拦截、查看、修改
+```
+
+Fiddler 本质是一个 **中间人代理（Man-in-the-Middle Proxy）**，所有经过的 HTTP/HTTPS 请求都会被记录并可被修改。
+
+### 1.3 测试人员为什么要学 Fiddler
+
+| 应用场景 | 说明 |
+|---------|------|
+| 接口测试 | 查看接口请求/响应数据，验证字段是否符合预期 |
+| Bug 定位 | 判断问题是前端展示问题还是后端数据问题 |
+| 弱网测试 | 模拟低带宽、延迟、丢包等网络环境 |
+| Mock 数据 | 在后端未就绪时构造响应数据进行前端测试 |
+| 异常测试 | 篡改请求参数、响应状态码，测试容错能力 |
+| 性能分析 | 查看请求耗时、资源大小 |
+| 安全测试 | 检测敏感信息是否明文传输 |
+
+---
+
+## 二、安装与基础配置
+
+### 2.1 下载安装
+
+1. 访问官网：`https://www.telerik.com/fiddler/fiddler-classic`
+2. 选择 **Fiddler Classic**（经典版免费，推荐测试人员使用）
+3. 填写表单（邮箱可以是真实邮箱）后下载安装包
+4. 双击安装，全部默认配置即可
+
+!!! tip "版本选择建议"
+    Fiddler Classic 免费且功能完整，Fiddler Everywhere 是付费跨平台版本。普通测试工作 Classic 版完全够用。
+
+### 2.2 首次启动配置
+
+打开 Fiddler 后，按以下步骤进行基础设置：
+
+**Step 1：开启抓包**
+
+主菜单 → `File` → 勾选 `Capture Traffic`（快捷键 F12）
+
+底部状态栏显示 `Capturing` 表示已开启抓包。
+
+**Step 2：基础参数配置**
+
+`Tools` → `Options` → `General` 标签，新版 Fiddler Classic 的界面如下：
+
+| 选项 | 建议 | 说明 |
+|------|------|------|
+| `Notify me for updates on startup` | 可取消勾选 | 每次启动都联网查更新会拖慢启动，测试机建议关掉 |
+| `Enable IPv6 (if available)` | 保持勾选 | 默认即可 |
+| `Participate in the Fiddler Classic Improvement Program` | 可取消勾选 | 上报使用数据，公司内网测机关掉更稳妥 |
+| `Enable high-resolution timers` | 保持勾选 | 保持时间统计精度 |
+| `Automatically stream audio & video` | 保持勾选 | 大体积音视频不整段读进内存，避免抓包卡顿 |
+| `If protocol violations are observed` | 保持 `Warn on critical errors` | 协议异常提示级别 |
+| `Systemwide Hotkey` | 默认 `CTRL + ALT + F` | 全局热键，用于快速切到 Fiddler 定位请求 |
+
+!!! note "教材旧写法说明"
+    有些资料会写「在 `General` 标签勾选 `Show a message when HTTPS-protected traffic is...`」。
+    这是**较老版本**的界面：新版 Fiddler Classic 的 `General` 标签已不再包含该选项，
+    `Check for updates on startup` 的实际标签名也变成了 `Notify me for updates on startup`。
+    **以你本机 `Tools` → `Options` 里实际看到的选项为准**，找不到的项直接跳过，不用纠结。
+
+**Step 3：连接配置**
+
+`Tools` → `Options` → `Connections` 标签：
+
+- `Fiddler Classic listens on port`: 8888（默认端口，可修改）
+- 勾选 `Allow remote computers to connect`（允许远程设备连接，移动端抓包必选）
+- 勾选 `Act as system proxy on startup`（启动时自动设为系统代理）
+- 勾选 `Monitor all connections`（监视所有连接，默认保持勾选）
+- `Bypass Fiddler Classic for URLs that start with`: 默认有 `<-loopback>`，**保留不要删**
+
+!!! tip "新版标签名带了 Classic"
+    新版把 `Fiddler listens on port` 改成了 `Fiddler Classic listens on port`，只是产品改名，
+    端口含义不变。看到名字不一样不要以为抄错了。
+
+修改后需 **重启 Fiddler** 生效（窗口底部也提示 `Changes may not take effect until Fiddler Classic is restarted.`）。
+
+---
+
+## 三、界面布局详解
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ 菜单栏 / 工具栏                                            │
+├────────────────────────┬─────────────────────────────────┤
+│                        │  右侧：请求/响应详情面板          │
+│  左侧：会话列表         │  ┌────────────────────────────┐ │
+│  （Session List）       │  │ Inspectors / AutoResponder │ │
+│  显示所有抓到的请求      │  │ Composer / Statistics      │ │
+│                        │  │ Filters / Timeline 等       │ │
+│                        │  └────────────────────────────┘ │
+│                        │                                 │
+├────────────────────────┴─────────────────────────────────┤
+│ 底部：QuickExec 命令行                                     │
+└──────────────────────────────────────────────────────────┘
+```
+
+### 3.1 左侧会话列表字段说明
+
+| 列名 | 含义 |
+|------|------|
+| `#` | 会话编号 |
+| `Result` | HTTP 响应状态码（200/302/404/500 等） |
+| `Protocol` | 协议（HTTP/HTTPS/FTP/Tunnel） |
+| `Host` | 目标主机地址 |
+| `URL` | 请求路径 |
+| `Body` | 响应内容大小（字节） |
+| `Caching` | 缓存策略 |
+| `Content-Type` | 响应内容类型 |
+| `Process` | 发起请求的进程名 |
+| `Comments` | 自定义备注 |
+
+### 3.2 会话图标颜色含义
+
+| 图标/颜色 | 含义 |
+|----------|------|
+| 蓝色实心 | HTML 文档响应 |
+| 绿色 | 包含 JS 脚本的响应 |
+| 紫色 | CSS 样式响应 |
+| 红色 | 错误请求（4xx/5xx） |
+| 灰色 | 重定向（3xx）或缓存（304） |
+| 锁形图标 | HTTPS 请求 |
+
+### 3.3 右侧核心功能区
+
+最常用的几个 Tab：
+
+- **Inspectors**：查看请求/响应详情（重点）
+- **AutoResponder**：自动响应器，用于 Mock 数据
+- **Composer**：手动构造请求（类似 Postman）
+- **Filters**：过滤会话
+- **Statistics**：性能统计
+
+---
+
+## 四、HTTPS 抓包配置
+
+!!! warning "重要"
+    默认情况下 Fiddler 只能抓 HTTP 请求，对 HTTPS 显示为 `Tunnel to xxx:443`，看不到具体内容。需要安装证书才能解密 HTTPS。
+
+!!! warning "HTTP/3（QUIC）注意"
+    Chrome 等浏览器默认启用 HTTP/3 over QUIC（基于 UDP），Fiddler Classic 作为 TCP 代理完全无法抓到这类请求。排查时需在浏览器中禁用 QUIC：
+
+    - Chrome：访问 `chrome://flags/#enable-quic`，设为 `Disabled`
+    - 或启动 Chrome 时加参数 `--disable-quic`
+
+### 4.1 启用 HTTPS 解密
+
+`Tools` → `Options` → `HTTPS` 标签：
+
+1. 勾选 `Capture HTTPS CONNECTs`
+2. 勾选 `Decrypt HTTPS traffic`
+3. 下拉框选择 `...from all processes`（抓取所有进程的 HTTPS）
+4. 弹出证书安装提示，点击 `Yes` → `Yes` 安装根证书
+5. 勾选 `Ignore server certificate errors (unsafe)`（忽略证书错误，方便测试自签名证书的环境）
+
+### 4.2 验证证书安装
+
+Windows 系统下：
+
+- `Win + R` 输入 `certmgr.msc`
+- 进入 `受信任的根证书颁发机构` → `证书`
+- 查找名为 `DO_NOT_TRUST_FiddlerRoot` 的证书
+
+存在即表示安装成功。
+
+### 4.3 配置 Filters（可选）
+
+抓包时往往只关心特定域名，可在 `Filters` Tab 配置：
+
+1. 勾选 `Use Filters`
+2. `Hosts` 区域选择 `Show only the following Hosts`
+3. 输入要监控的域名，多个用分号分隔，例如：
+   ```
+   *.test.example.com; api.example.com
+   ```
+
+---
+
+## 五、移动端抓包配置
+
+### 5.1 前置条件
+
+- 手机和电脑必须在 **同一个 Wi-Fi 网络** 下
+- Fiddler 已勾选 `Allow remote computers to connect`
+- Windows 防火墙允许 Fiddler 通过（首次配置时会弹窗）
+
+### 5.2 查看电脑 IP
+
+打开 CMD 执行：
+
+```bash
+ipconfig
+```
+
+记录 `IPv4 地址`，例如 `192.168.1.100`。
+
+或鼠标悬停在 Fiddler 右上角 `Online` 图标上查看 IP。
+
+### 5.3 Android 端配置
+
+**Step 1：配置代理**
+
+`设置` → `WLAN` → 长按当前 Wi-Fi → `修改网络` → 勾选 `显示高级选项`：
+
+- 代理：`手动`
+- 服务器主机名：`192.168.1.100`（你的电脑 IP）
+- 服务器端口：`8888`
+
+**Step 2：安装证书**
+
+1. 手机浏览器访问：`http://192.168.1.100:8888`
+2. 点击页面右上角 `FiddlerRoot certificate` 下载证书
+3. 进入 `设置` → `安全` → `从存储设备安装证书`
+4. 选中下载的证书文件，命名后安装
+
+!!! warning "Android 7.0+ 注意"
+    系统默认不信任用户安装的 CA 证书。需要：
+
+    - 应用配置 `network_security_config.xml` 信任用户证书（开发协助），或
+    - 使用 root 设备将证书安装到系统目录，或
+    - **Magisk + MagiskTrustUserCerts 模块**：免手动复制证书，自动信任用户证书（root 用户推荐），或
+    - 使用 Android 6.0 以下设备/模拟器测试
+
+### 5.4 iOS 端配置
+
+**Step 1：配置代理**
+
+`设置` → `Wi-Fi` → 点击当前 Wi-Fi 右侧 `i` 图标 → 下滑找到 `配置代理`：
+
+- 选择 `手动`
+- 服务器：`192.168.1.100`
+- 端口：`8888`
+
+**Step 2：安装证书**
+
+1. Safari 访问：`http://192.168.1.100:8888`
+2. 点击 `FiddlerRoot certificate` 下载描述文件
+3. 进入 `设置` → `通用` → `VPN与设备管理` → 安装下载的描述文件
+4. 进入 `设置` → `通用` → `关于本机` → `证书信任设置`
+5. 开启对 `DO_NOT_TRUST_FiddlerRoot` 的信任开关
+
+### 5.5 验证抓包
+
+配置完成后，在手机上打开任意 App 或浏览器访问网页，Fiddler 会话列表应出现对应请求。
+
+!!! warning "注意"
+    测试完成后记得关闭手机代理，否则手机断开 Fiddler 后将无法上网。
+
+---
+
+## 六、核心功能详解
+
+### 6.1 Inspectors（请求/响应查看器）
+
+选中一个会话后，右侧 `Inspectors` 提供多种查看方式：
+
+**请求查看（上半部分）：**
+
+| Tab | 用途 |
+|-----|------|
+| `Headers` | 查看请求头 |
+| `TextView` | 文本形式查看请求体 |
+| `WebForms` | 表单数据可视化 |
+| `JSON` | JSON 格式化查看 |
+| `Raw` | 完整原始请求 |
+
+**响应查看（下半部分）：**
+
+| Tab | 用途 |
+|-----|------|
+| `Headers` | 响应头 |
+| `JSON` | JSON 树形展示（最常用） |
+| `ImageView` | 图片响应预览 |
+| `WebView` | HTML 渲染预览 |
+| `Cookies` | Cookie 解析 |
+| `Raw` | 完整原始响应 |
+
+### 6.2 AutoResponder（Mock 数据神器）
+
+**测试场景：** 后端接口未就绪 / 模拟异常响应 / 固定返回值测试
+
+**操作步骤：**
+
+1. 切换到 `AutoResponder` Tab
+2. 勾选 `Enable rules` 和 `Unmatched requests passthrough`
+3. 从左侧拖入要 Mock 的请求，或点击 `Add Rule`
+4. 在底部规则栏：
+   - 匹配条件：`EXACT:https://api.example.com/user/info` 或 `regex:.*api\.example\.com/user.*`
+   - 响应内容：选择 `Find a file` 指定本地 JSON 文件，或选择内置响应（如 `404_Plain.dat`）
+5. 点击 `Save`
+
+**常用匹配语法：**
+
+```
+EXACT:URL          完全匹配
+NOT:URL            不匹配
+regex:正则表达式    正则匹配
+```
+
+### 6.3 Composer（请求构造器）
+
+类似 Postman 的接口调试工具，支持手动发起请求。
+
+**操作步骤：**
+
+1. 切换到 `Composer` Tab
+2. 选择请求方法（GET/POST/PUT/DELETE）
+3. 填写 URL
+4. 填写 Request Headers
+5. POST 请求填写 Request Body
+6. 点击 `Execute` 发送
+
+**实用技巧：** 在左侧会话列表中右键任意请求 → `Replay` → `Reissue Sequentially`，可重放该请求。或直接拖动会话到 Composer Tab，自动填充参数。
+
+### 6.4 Filters（过滤器）
+
+抓包时干扰请求太多，可通过 Filters 精确筛选：
+
+| 配置项 | 作用 |
+|--------|------|
+| `Hosts` 区 | 按域名过滤（最常用） |
+| `Client Process` | 按进程过滤（如只抓 Chrome） |
+| `Request Headers` | 按特定请求头过滤 |
+| `Response Status Code` | 按响应状态码过滤（只看 404 / 500） |
+| `Response Type and Size` | 按响应类型/大小过滤 |
+| `Breakpoints` | 自动断点设置 |
+
+!!! tip "提示"
+    修改 Filters 后需点击右上角 `Actions` → `Run Filterset now` 立即生效。
+
+### 6.5 Breakpoints（断点）
+
+断点用于在请求/响应到达目标前暂停，进行参数修改。
+
+**设置断点的两种方式：**
+
+**方式一：菜单设置（全局断点）**
+
+- `Rules` → `Automatic Breakpoints` → `Before Requests`（请求前断点）
+- `Rules` → `Automatic Breakpoints` → `After Responses`（响应后断点）
+- 取消：选择 `Disabled` 或按 F11 切换
+
+**方式二：命令行设置（针对特定 URL）**
+
+底部 QuickExec 命令行输入：
+
+```
+bpu https://api.example.com/login    # 请求断点
+bpafter https://api.example.com/list  # 响应断点
+bpu                                   # 清除请求断点
+```
+
+**断点触发后操作：**
+
+- `Break on Response` 按钮：让请求继续走，但在响应回来时再次中断
+- `Run to Completion` 按钮：放行请求继续执行
+- 修改 Inspectors 中的内容后再点 `Run to Completion`
+
+### 6.6 Statistics（性能统计）
+
+选中单个或多个会话，切换到 `Statistics` Tab，可查看：
+
+- DNS 查询耗时
+- TCP 连接耗时
+- HTTPS 握手耗时
+- 请求/响应传输耗时
+- 总耗时
+
+适用于 **性能问题初步定位**，判断慢在网络层还是服务器处理。
+
+---
+
+## 七、测试场景实战
+
+### 7.1 场景一：接口数据验证
+
+**需求：** 验证用户登录接口返回数据是否正确
+
+**步骤：**
+
+1. 在被测应用执行登录操作
+2. 在 Fiddler 中找到 `/api/login` 请求
+3. `Inspectors` → 上方 `WebForms` 查看入参（账号密码是否正确传输）
+4. `Inspectors` → 下方 `JSON` 查看返回结构
+5. 核对字段名、字段类型、必填项、token 格式等是否符合接口文档
+
+### 7.2 场景二：Mock 异常响应
+
+**需求：** 测试当服务端返回 500 错误时，前端是否友好提示
+
+**步骤：**
+
+1. 准备本地 JSON 文件 `error_500.json`：
+
+```json
+{
+  "code": 500,
+  "msg": "服务器内部错误",
+  "data": null
+}
+```
+
+2. `AutoResponder` → `Add Rule`
+3. 匹配规则：`regex:.*api\.example\.com/user/info.*`
+4. 响应：选择 `Find a file...` 指向 `error_500.json`
+5. 修改返回的 HTTP 状态码：在规则上右键 → `Edit Response Headers` → 修改 `HTTP/1.1 500 Internal Server Error`
+6. 在应用中触发该接口，观察前端表现
+
+### 7.3 场景三：篡改请求参数
+
+**需求：** 测试金额参数被篡改后的服务端校验
+
+**步骤：**
+
+1. `Rules` → `Automatic Breakpoints` → `Before Requests`
+2. 在被测应用发起支付请求
+3. Fiddler 拦截后，进入 `Inspectors` → `WebForms` 或 `TextView`
+4. 修改金额字段，如将 `amount=100` 改为 `amount=0.01`
+5. 点击 `Run to Completion` 放行
+6. 观察服务端是否做了金额校验
+
+!!! example "安全测试要点"
+    重点验证服务端对客户端传参的二次校验，不能仅依赖前端校验。
+
+### 7.4 场景四：弱网模拟
+
+**需求：** 模拟 2G 网络环境下页面加载体验
+
+**步骤：**
+
+1. `Rules` → `Performance` → 勾选 `Simulate Modem Speeds`
+2. 此时 Fiddler 会模拟约 56K 调制解调器的速度
+3. 自定义弱网参数：`Rules` → `Customize Rules` 打开脚本编辑器
+4. 找到 `m_SimulateModem` 块，修改延迟值：
+
+```javascript
+if (m_SimulateModem) {
+    // 上行延迟（毫秒/字节，即每发送 1 字节等待该毫秒数）
+    oSession["request-trickle-delay"] = "300"; 
+    // 下行延迟（毫秒/字节，即每接收 1 字节等待该毫秒数）
+    oSession["response-trickle-delay"] = "150";
+}
+```
+
+!!! info "版本说明"
+    Fiddler Classic 使用 **JScript.NET**（类 C# 语法，非 JavaScript），但代码结构相似，不影响理解。`request-trickle-delay` / `response-trickle-delay` 单位是**毫秒/字节**（每传输 1 字节延迟多少毫秒），不是毫秒/KB。
+
+5. 保存文件，立即生效
+
+### 7.5 场景五：Cookie/Token 测试
+
+**需求：** 验证 Token 过期后的处理逻辑
+
+**步骤：**
+
+1. 正常登录后抓取一个需要鉴权的接口
+2. 在 `Composer` 中拖入该请求
+3. 修改 Header 中的 `Authorization` 或 `Cookie` 字段
+   - 测试 1：删除 Token → 应返回 401
+   - 测试 2：Token 改为非法字符串 → 应返回 401
+   - 测试 3：使用过期 Token → 应返回 401 或 403
+4. 点击 `Execute` 发送，观察响应
+
+### 7.6 场景六：重放攻击测试
+
+**需求：** 验证幂等性接口是否做防重处理
+
+**步骤：**
+
+1. 抓取一次"提交订单"请求
+2. 右键 → `Replay` → `Reissue and Edit`（或 R 键快速重放）
+3. 重复多次相同请求
+4. 检查服务端是否：
+   - 创建了多个订单（未防重，存在 Bug）
+   - 仅创建一个订单，其余返回"重复请求"提示（正确）
+
+---
+
+## 八、常用快捷键与命令
+
+### 8.1 快捷键
+
+| 快捷键 | 功能 |
+|--------|------|
+| `F12` | 暂停/开始抓包 |
+| `F11` | 切换请求断点 |
+| `Ctrl + X` | 清空会话列表 |
+| `Ctrl + A` | 全选会话 |
+| `Ctrl + I` | 反选 |
+| `R` | 重放选中请求 |
+| `Shift + R` | 多次重放（弹窗输入次数） |
+| `Delete` | 删除选中会话 |
+| `Ctrl + Delete` | 删除除选中外所有会话 |
+
+### 8.2 QuickExec 命令行（底部黑色输入框）
+
+| 命令 | 功能 |
+|------|------|
+| `?text` | 高亮 URL 包含 text 的会话 |
+| `>500` | 高亮响应体大于 500 字节的会话 |
+| `=200` | 高亮状态码 200 的会话 |
+| `@host` | 高亮指定 host 的会话 |
+| `select html` | 选中所有 HTML 响应 |
+| `select json` | 选中所有 JSON 响应 |
+| `cls` | 清空会话列表 |
+| `bpu URL` | 对该 URL 设请求断点 |
+| `bpafter URL` | 对该 URL 设响应断点 |
+| `bpv` 或 `bpm POST` | 对指定 HTTP 方法设断点 |
+| `g` 或 `go` | 放行当前断点 |
+| `help` | 查看所有命令 |
+
+---
+
+## 九、常见问题排查
+
+### 9.1 Fiddler 抓不到包
+
+**排查清单：**
+
+1. 是否已勾选 `File` → `Capture Traffic`
+2. 浏览器是否使用了其他代理（如 SwitchyOmega）
+3. Chrome 是否启用了 QUIC（地址栏访问 `chrome://flags/` 搜索 `quic` 并禁用）
+4. 应用是否走了 SPDY/HTTP2 但未配置抓取（`Tools` → `Options` → `HTTPS` 取消勾选 `Skip decryption for the following hosts`）
+
+### 9.2 HTTPS 显示 Tunnel to xxx:443
+
+**原因：** 未启用 HTTPS 解密或证书未正确安装
+
+**解决：**
+
+1. `Tools` → `Options` → `HTTPS` → 勾选 `Decrypt HTTPS traffic`
+2. 重新生成证书：`Actions` → `Reset All Certificates`
+3. 重启 Fiddler
+
+### 9.3 手机配置代理后无法上网
+
+**排查清单：**
+
+1. 电脑和手机是否在同一 Wi-Fi
+2. Fiddler 是否勾选了 `Allow remote computers to connect`
+3. 电脑防火墙是否拦截了 8888 端口（临时关闭防火墙测试）
+4. IP 是否配错（重新执行 `ipconfig` 确认）
+5. 公司网络是否有 AP 隔离（无线设备相互隔离）
+
+### 9.4 抓不到某些 App 的请求
+
+**可能原因：**
+
+- App 启用了 **证书锁定（SSL Pinning）**：客户端只信任内置证书，对中间人代理免疫
+- 解决方案：
+  - 联系开发关闭测试包的 SSL Pinning
+  - 使用 Frida + 反 Pinning 脚本（需要 root/越狱设备）
+  - 使用专门的工具如 HttpCanary、Charles + SSL Kill Switch
+
+### 9.5 抓包时电脑卡顿
+
+**优化建议：**
+
+1. 定期 `Ctrl + X` 清空会话列表
+2. 设置过滤器只抓关心的域名
+3. `Tools` → `Options` → `General` 确认**勾选** `Automatically stream audio & video`（音视频内容边下边传，不会整段缓存进内存）
+4. 关闭不需要的进程，减少干扰会话
+
+!!! note "`Decode Compressed Content` 在哪里"
+    网上不少教程写「在 `Tools` → `Options` → `General` 取消勾选 `Decode Compressed Content`」，但这一项**不在 Options 里**，而在搜索对话框：`Edit` → `Find Sessions...` → `Options` 分组 → `Decode compressed content`（勾选后会在搜索时先解压响应体）。它只影响搜索行为，和抓包卡顿无关，找不到属正常现象。
+
+### 9.6 Fiddler 关闭后浏览器无法上网
+
+**原因：** Fiddler 异常退出，系统代理未自动还原
+
+**解决：**
+
+- Windows：`设置` → `网络和 Internet` → `代理` → 关闭 `使用代理服务器`
+- 或重新打开 Fiddler 后正常退出（会自动还原）
+
+---
+
+## 十、进阶建议
+
+测试人员掌握 Fiddler 后，建议进一步学习：
+
+- **Charles**：Mac 平台的同类工具，界面更友好
+- **Wireshark**：工作在更底层（TCP/IP 层），适合协议层问题排查
+- **mitmproxy**：命令行工具，支持 Python 脚本扩展，适合自动化场景
+- **Postman**：专注于接口调试和接口自动化测试
+- **JMeter**：性能测试工具，可与 Fiddler 配合录制脚本
+
+---
+
+## 动手任务：用抓包证明「前端显示错了」还是「后端返回错了」
+
+> 这是本教程的收尾练习。请**独立完成**，不要先看参考答案。目标不是"能抓到包"，而是**能用抓包结果判定缺陷归属方**。
+
+### 任务背景
+
+用户反馈："商品详情页显示价格是 99 元，但下单时变成 129 元。"
+
+前端说："我原样展示接口返回的数据。"
+后端说："我返回的价格一直是对的。"
+
+两边都在甩锅。作为测试，你要**用抓包证据**判定到底是谁的问题，并给出会复现的用例。
+
+### 任务数据
+
+请用 Fiddler 抓取一个真实的商品详情页（推荐用任意电商站的公开页面，或你自己搭建的测试页面）。如果你打开了 Fiddler 后页面打不开，请先确认 HTTPS 解密证书已正确安装。
+
+抓包后，重点看这三个请求（假设的示例数据，用于说明格式）：
+
+**请求 1：商品详情接口**
+
+```http
+GET /api/product/1001 HTTP/1.1
+Host: shop.test.internal
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "productId": 1001, "name": "机械键盘", "price": 99.00, "promoPrice": 99.00 }
+```
+
+**请求 2：加入购物车接口**
+
+```http
+POST /api/cart/add HTTP/1.1
+Host: shop.test.internal
+Content-Type: application/json
+
+{ "productId": 1001, "quantity": 1 }
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "cartId": "C001", "productId": 1001, "price": 129.00, "quantity": 1 }
+```
+
+**请求 3：结算页接口**
+
+```http
+GET /api/order/confirm?cartId=C001 HTTP/1.1
+Host: shop.test.internal
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "productId": 1001, "unitPrice": 129.00, "totalAmount": 129.00 }
+```
+
+### 任务要求
+
+请依次完成，并**保留抓包截图/会话记录**：
+
+1. **定位分歧点**：三个接口里，价格从哪一步开始变成 129？给出具体请求名和字段。
+2. **判定归属**：结合"前端说原样展示""后端说返回都对"这两句话，判断谁在说假话，并说明依据。
+3. **排除干扰项**：怎么确认不是"你抓包环境本身导致的错误"（比如代理插入、缓存、重定向）？
+4. **设计复现用例**：写出最小复现步骤 + 预期结果/实际结果，可直接提交为缺陷。
+5. **给出可复用产出**：写一条 Fiddler 的过滤规则或断点方案，让下次同类问题能**自动停在该接口**上。
+
+### 提交物
+
+| 产出 | 要求 |
+|------|------|
+| 抓包证据 | 三个接口的请求/响应截图，标出价格字段 |
+| 归属判定 | 明确结论 + 依据（不是"可能前端有问题"） |
+| 复现用例 | 最小步骤 + 预期/实际 |
+| 结论 | 用 3-5 句话说明：这是需求问题还是缺陷，影响范围多大，建议怎么修 |
+
+### 完成标准
+
+- [ ] 能**沿着请求链**逐跳比对字段，而不是只看最后一个接口
+- [ ] 结论指向具体的接口和字段，不是笼统的"数据不一致"
+- [ ] 能说明抓包环境本身不会篡改业务数据（排除自身干扰）
+- [ ] 第 5 题的过滤/断点方案能实际配出来，不是理论描述
+
+??? tip "参考答案与思路（先自己做完再看）"
+
+    **第 1 题：分歧点在「请求 2」**
+
+    - 请求 1（商品详情）：`price = 99.00`，正确。
+    - 请求 2（加入购物车）：响应里 `price` 变成了 **129.00** ← **价格在这里首次变化**。
+    - 请求 3（结算）：`unitPrice = 129.00`，只是**继承**了请求 2 的错值。
+
+    所以问题出在**加入购物车**这一步。
+
+    **第 2 题：归属判定**
+
+    - 前端说"原样展示"——**成立**：商品详情页展示的 99 确实来自请求 1 的返回，前端没改。
+    - 后端说"我返回的都是对的"——**不成立**：请求 2 的响应里 `price` 已经是 129，而请求 2 的**请求体里根本没有价格**（只有 `productId` 和 `quantity`）。价格是后端自己算出来并返回的，不是前端传的。
+
+    **结论：后端问题**。后端的**加购逻辑取价来源错了**——很可能取了"当前最新价/活动价"而不是"下单时价"，或者缓存了错误的价格。
+
+    > 注意一个细节能加强结论：请求 2 的 **request body 不含 price**，所以前端不可能"传错价格"。这是判定归属的**关键证据**。
+
+    **第 3 题：排除抓包环境干扰**
+
+    ```text
+    1. 关掉 Fiddler 代理，用 Postman/curl 直接请求 /api/cart/add，
+       看返回的 price 是否仍是 129 → 若仍是 129，则与抓包无关。
+    2. 检查会话里是否有 302 重定向，确认你比对的是最终响应而非中间跳转。
+    3. 确认没有开启 Fiddler 的 AutoResponder（可能命中了你之前配的 mock 规则）。
+    4. 清一次购物车后重新加购，排除"脏购物车数据"影响。
+    ```
+
+    这四步能证明"价格变化来自服务端业务逻辑，不是抓包工具造成的"。
+
+    **第 4 题：复现用例**
+
+    | 字段 | 内容 |
+    |------|------|
+    | 标题 | 加购接口返回价格与商品详情不一致（99 → 129） |
+    | 前置 | 商品 1001 详情价 99，购物车为空 |
+    | 步骤 | 1. 调 `/api/product/1001` 确认 price=99<br>2. 调 `/api/cart/add` 传 productId=1001, quantity=1<br>3. 查看响应中的 price |
+    | 预期 | 加购返回 price=99（与详情一致） |
+    | 实际 | 加购返回 price=129 |
+    | 影响 | 结算金额错误，用户实付与预期不符，存在资损与投诉风险 |
+
+    **第 5 题：Fiddler 过滤/断点**
+
+    ```text
+    过滤规则（Filters 标签）：
+      Hosts: shop.test.internal
+      Show only if URL contains: /api/cart/add
+
+    断点方案（Rules → Automatic Breakpoints → After Requests）：
+      条件填：/api/cart/add
+      → 之后每次加购请求都会自动暂停，可直接检查响应里的 price 字段
+
+    更高效：用 FiddlerScript 的 OnBeforeResponse 加断言，
+      当 price 与详情价不一致时自动高亮该会话。
+    ```
+
+    这样下次回归时，同类问题会在**请求发出的瞬间**被拦下，而不是等用户投诉。
+
+---
+
+## 附录：参考资料
+
+- Fiddler 官方文档：`https://docs.telerik.com/fiddler/`
+- HTTP 状态码参考：MDN Web Docs
+- FiddlerScript 自定义脚本开发指南（高级）
+
+---
+
+!!! info "文档说明"
+    本教程基于 Fiddler Classic 5.x 版本编写，适用于 Windows 10/11 平台。如使用 Mac 系统，建议改用 Fiddler Everywhere 或 Charles。
+
+!!! warning "测试纪律"
+    抓包测试涉及用户数据，请严格在测试环境进行，禁止抓取生产环境用户数据，禁止用于非授权的安全测试。
+
+### 推荐下一步
+
+根据你的学习进度，选择下一步：
+
+1. **如果你想学接口调试**：学习 [Postman 接口测试](Postman接口测试教程-软件测试版.md)，掌握接口调试和断言
+2. **如果你想看完整工作流**：学习 [接口抓包联调实战](接口抓包联调实战教程-软件测试版.md)，把 Fiddler + Postman + Python 串起来
+3. **如果你想进入下一阶段**：学习 [接口测试方法论](../专项测试/接口测试完整教程-软件测试版.md)，掌握用例设计
+
+### 阶段测验
+
+完成教程后，建议做 [Fiddler 抓包测验](Fiddler抓包测验.md) 检验学习效果。
+
+### 通关检查
+
+完成本阶段后，使用 [第2阶段-工具实战通关](../学习中心/第2阶段-工具实战通关.md) 检查是否可以进入下一阶段。

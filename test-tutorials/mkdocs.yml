@@ -1,0 +1,280 @@
+# 软件测试知识体系 - MkDocs 配置
+site_name: 软件测试知识体系
+site_description: 面向软件测试工程师的系统化学习教程
+site_author: Test Team
+site_url: https://bingu7.github.io/test-tutorials/
+
+# GitHub Pages 仓库信息
+repo_name: test-tutorials
+repo_url: https://github.com/bingu7/test-tutorials
+edit_uri: edit/main/docs/
+
+# 主题配置
+theme:
+  name: material
+  language: zh
+  logo: assets/images/bingu-logo.png
+  custom_dir: overrides          # 自定义模板（评论系统等）
+  # 关闭 Google Fonts 远程加载：改用系统字体栈（见 extra.css），
+  # 避免国内访问 fonts.googleapis.com 超时拖慢首屏
+  font: false
+  palette:
+    # 浅色模式
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到暗色模式
+    # 暗色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
+  features:
+    - navigation.sections       # 侧边栏分组折叠
+    - navigation.expand         # 默认展开侧边栏
+    - navigation.top            # 返回顶部按钮
+    - navigation.instant        # 即时加载（SPA 体验）
+    - navigation.footer         # 上/下篇导航
+    - navigation.tabs           # 顶部标签导航（非 sticky；上滑导航由自定义 scroll-tabs 负责）
+    - search.suggest            # 搜索建议
+    - search.highlight          # 搜索高亮
+    - content.code.copy         # 代码块复制按钮
+    - content.code.annotate     # 代码注释
+    - toc.follow                # 目录跟随滚动
+
+  icon:
+    repo: fontawesome/brands/github
+
+# 插件
+plugins:
+  - search:
+      separator: '[\s\-\.]+'   # 中文搜索分词
+      lang: zh
+  - meta:                        # 支持 .meta.yml 批量设置页面元数据（评论开关等）
+      meta_file: .meta.yml
+  - git-revision-date-localized:   # 页面底部显示“最后更新”时间
+      enable_creation_date: false
+      type: date
+      locale: zh
+  # 社交分享卡片（og:image）：仅在 CI 生成，本地构建跳过（省去下载中文字体）
+  # 背景色不显式指定：默认跟随站点 palette 的 primary 色（indigo #4051b5）
+  - social:
+      enabled: !ENV [CI, false]
+      cards_layout_options:
+        font_family: Noto Sans SC   # 中文字形；默认 Roboto 不含中文
+
+# Markdown 扩展
+markdown_extensions:
+  - abbr                       # 缩写
+  - admonition                 # 提示框
+  - attr_list                  # 属性列表
+  - def_list                   # 定义列表
+  - footnotes                  # 脚注
+  - md_in_html                 # 允许 HTML 块内解析 Markdown（需在容器上加 markdown="1"）
+  - tables                     # 表格
+  - toc:
+      permalink: true          # 标题永久链接
+  - pymdownx.arithmatex        # 数学公式
+  - pymdownx.betterem          # 更好的强调
+  - pymdownx.caret             # 上标
+  - pymdownx.details           # 折叠块
+  - pymdownx.emoji             # 表情
+  - pymdownx.highlight:        # 代码高亮
+      anchor_linenums: true
+  - pymdownx.inlinehilite      # 行内代码高亮
+  - pymdownx.keys              # 键盘按键
+  - pymdownx.mark              # 高亮文本
+  - pymdownx.smartsymbols      # 智能符号
+  - pymdownx.superfences:      # 超级围栏（支持嵌套）
+      custom_fences:           # ```mermaid 围栏交给 mermaid.js 渲染（见 extra_javascript）
+        # 类名用 mermaid-src 而非 mermaid：避免 mermaid 11 在 window load 时的
+        # 内置自动扫描（querySelector: ".mermaid"）抢先处理并清空节点、丢失源码
+        - name: mermaid
+          class: mermaid-src
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:           # 标签页
+      alternate_style: true
+  - pymdownx.tasklist          # 任务列表
+  - pymdownx.tilde             # 删除线
+
+# 导航结构
+nav:
+  - 首页: index.md
+  - 学习中心:
+    - 学习中心总览: 学习中心.md
+    - 学习路线: 学习路线.md
+    - 工具选型指南: 工具选型指南.md
+    - 阶段学习检查清单: 阶段学习检查清单.md
+    - 章节练习与参考答案: 章节练习与参考答案.md
+    - 练习总览: 练习总览.md
+    - 学习验收与通关路径: 学习验收与通关路径.md
+    - 在线编程练习场: 学习中心/在线编程练习场.md
+    - 阶段通关检查:
+      - 第1阶段-测试入门通关: 学习中心/第1阶段-测试入门通关.md
+      - 第2阶段-工具实战通关: 学习中心/第2阶段-工具实战通关.md
+      - 第3阶段-专项测试通关: 学习中心/第3阶段-专项测试通关.md
+      - 第4阶段-自动化测试通关: 学习中心/第4阶段-自动化测试通关.md
+      - 第5阶段-项目面试通关: 学习中心/第5阶段-项目面试通关.md
+    - 学习进度说明: 学习中心/学习进度说明.md
+    - 更新日志: CHANGELOG.md
+  - 基础理论:
+    - 软件测试理论: 基础理论/软件测试理论基础教程.md
+    - 软件测试理论测验: 基础理论/软件测试理论基础测验.md
+    - ISTQB 术语速查: 基础理论/ISTQB软件测试术语速查.md
+    - ISTQB 术语测验: 基础理论/ISTQB术语速查测验.md
+    - 测试金字塔与分层策略: 基础理论/测试金字塔与自动化分层策略.md
+    - 测试金字塔测验: 基础理论/测试金字塔测验.md
+    - 探索式测试: 基础理论/探索式测试教程-软件测试版.md
+    - 探索式测试测验: 基础理论/探索式测试测验.md
+    - Python 基础: 基础理论/Python基础教程-软件测试版.md
+    - Python 基础测验: 基础理论/Python基础测验.md
+    - 前端基础: 基础理论/前端基础教程-软件测试版.md
+    - 前端基础测验: 基础理论/前端基础测验.md
+    - JavaScript 基础: 基础理论/JavaScript基础教程-软件测试版.md
+    - JavaScript 基础测验: 基础理论/JavaScript基础测验.md
+    - TypeScript 基础: 基础理论/TypeScript基础教程-软件测试版.md
+    - TypeScript 基础测验: 基础理论/TypeScript基础测验.md
+    - 敏捷测试: 基础理论/敏捷测试教程-软件测试版.md
+    - 敏捷测试测验: 基础理论/敏捷测试测验.md
+    - 测试用例设计方法论: 基础理论/测试用例设计方法论教程-软件测试版.md
+    - 测试用例设计测验: 基础理论/测试用例设计测验.md
+  - 工具操作:
+    - 数据库 SQL: 工具操作/数据库SQL教程-软件测试版.md
+    - SQL 基础测验: 工具操作/SQL基础测验.md
+    - Redis 与 MongoDB: 工具操作/Redis与MongoDB教程-软件测试版.md
+    - Redis 与 MongoDB 测验: 工具操作/Redis与MongoDB测验.md
+    - Linux 实用: 工具操作/Linux实用教程-软件测试版.md
+    - Linux 基础测验: 工具操作/Linux基础测验.md
+    - Git 版本控制: 工具操作/Git版本控制教程-软件测试版.md
+    - Git 基础测验: 工具操作/Git基础测验.md
+    - Docker 容器: 工具操作/Docker容器教程-软件测试版.md
+    - Docker 基础测验: 工具操作/Docker基础测验.md
+    - Fiddler 抓包: 工具操作/Fiddler抓包教程-软件测试版.md
+    - Fiddler 抓包测验: 工具操作/Fiddler抓包测验.md
+    - Charles 抓包: 工具操作/Charles抓包教程-软件测试版.md
+    - Charles 抓包测验: 工具操作/Charles抓包测验.md
+    - Postman 接口: 工具操作/Postman接口测试教程-软件测试版.md
+    - Postman 接口测试测验: 工具操作/Postman接口测试测验.md
+    - 接口抓包联调实战: 工具操作/接口抓包联调实战教程-软件测试版.md
+    - 接口抓包联调测验: 工具操作/接口抓包联调测验.md
+    - 正则表达式: 工具操作/正则表达式教程-软件测试版.md
+    - 正则表达式速查表: 工具操作/正则表达式速查表-软件测试版.md
+    - 正则表达式测验: 工具操作/正则表达式测验.md
+    - 网络知识: 工具操作/网络知识教程-软件测试版.md
+    - 网络知识测验: 工具操作/网络知识测验.md
+    - 禅道与 Jira 实战: 工具操作/禅道与Jira实战教程-软件测试版.md
+    - 禅道与 Jira 测验: 工具操作/禅道与Jira测验.md
+  - 专项测试:
+    - 接口测试方法论: 专项测试/接口测试完整教程-软件测试版.md
+    - 接口测试基础测验: 专项测试/接口测试基础测验.md
+    - 接口测试进阶测验: 专项测试/接口测试进阶测验.md
+    - JMeter 性能测试: 专项测试/JMeter性能测试教程-软件测试版.md
+    - JMeter 性能测试测验: 专项测试/JMeter性能测试测验.md
+    - Web 安全测试: 专项测试/Web安全测试教程-软件测试版.md
+    - Web 安全测试测验: 专项测试/Web安全测试测验.md
+    - AI 辅助测试: 专项测试/AI辅助测试教程-软件测试版.md
+    - AI 辅助测试测验: 专项测试/AI辅助测试测验.md
+    - 测试左移与右移: 专项测试/测试左右移教程-软件测试版.md
+    - 测试左右移测验: 专项测试/测试左右移测验.md
+    - 移动端专项测试: 专项测试/移动端专项测试教程-软件测试版.md
+    - 移动端专项测试测验: 专项测试/移动端专项测试测验.md
+    - 小程序与 H5 测试: 专项测试/小程序与H5测试教程-软件测试版.md
+    - 小程序与 H5 测验: 专项测试/小程序与H5测试测验.md
+  - 自动化测试:
+    - Python 接口自动化: 自动化测试/Python+Requests+Allure接口自动化教程-软件测试版.md
+    - Python 接口自动化测验: 自动化测试/Python接口自动化测验.md
+    - Selenium Web 自动化: 自动化测试/Selenium-Web自动化教程-软件测试版.md
+    - Selenium 基础测验: 自动化测试/Selenium基础测验.md
+    - Playwright Web 自动化: 自动化测试/Playwright自动化测试教程-软件测试版.md
+    - Playwright 基础测验: 自动化测试/Playwright基础测验.md
+    - Appium App 自动化: 自动化测试/Appium-App自动化教程-软件测试版.md
+    - Appium 基础测验: 自动化测试/Appium基础测验.md
+    - 测试框架设计与设计模式: 自动化测试/测试框架设计与设计模式教程.md
+    - 测试框架设计测验: 自动化测试/测试框架设计测验.md
+  - 持续集成:
+    - Jenkins CI/CD: 持续集成/Jenkins-CICD教程-软件测试版.md
+    - GitHub Actions: 持续集成/GitHub-Actions教程-软件测试版.md
+    - GitLab CI/CD: 持续集成/GitLab-CICD教程-软件测试版.md
+    - 持续集成测验: 持续集成/持续集成测验.md
+  - 项目实战:
+    - 项目实战总览: 项目实战/index.md
+    - 练习靶场与工具清单: 项目实战/练习靶场与工具清单.md
+    - 电商系统测试实战: 项目实战/电商系统测试实战.md
+    - 电商系统测试实战测验: 项目实战/电商系统测试实战测验.md
+    - 接口自动化项目实战: 项目实战/接口自动化项目实战.md
+    - 接口自动化项目实战测验: 项目实战/接口自动化项目实战测验.md
+    - Web 自动化项目实战: 项目实战/Web自动化项目实战.md
+    - Web 自动化项目实战测验: 项目实战/Web自动化项目实战测验.md
+    - 性能测试项目实战: 项目实战/性能测试项目实战.md
+    - 性能测试项目实战测验: 项目实战/性能测试项目实战测验.md
+    - CI/CD 自动化回归实战: 项目实战/CICD自动化回归实战.md
+    - CI/CD 自动化回归测验: 项目实战/CICD自动化回归测验.md
+  - 资源中心:
+    - 模板库:
+      - 模板库总览: 模板库/index.md
+      - 测试计划模板: 模板库/测试计划模板.md
+      - 测试用例模板: 模板库/测试用例模板.md
+      - 接口测试用例模板: 模板库/接口测试用例模板.md
+      - 缺陷报告模板: 模板库/缺陷报告模板.md
+      - 测试报告模板: 模板库/测试报告模板.md
+      - 上线检查清单: 模板库/上线检查清单.md
+    - 案例库:
+      - 案例库总览: 案例库/index.md
+      - 登录功能测试案例: 案例库/登录功能测试案例.md
+      - 购物车测试案例: 案例库/购物车测试案例.md
+      - 下单支付测试案例: 案例库/下单支付测试案例.md
+      - 权限控制测试案例: 案例库/权限控制测试案例.md
+      - 文件上传测试案例: 案例库/文件上传测试案例.md
+      - 搜索功能测试案例: 案例库/搜索功能测试案例.md
+      - 消息通知测试案例: 案例库/消息通知测试案例.md
+      - 多语言/国际化测试案例: 案例库/多语言国际化测试案例.md
+      - 兼容性测试案例: 案例库/兼容性测试案例-软件测试版.md
+      - 安全测试案例: 案例库/安全测试案例-软件测试版.md
+      - 性能测试案例: 案例库/性能测试案例-软件测试版.md
+    - 面试专题:
+      - 面试专题总览: 面试专题/index.md
+      - 软件测试面试题: 面试专题/软件测试面试题.md
+      - 接口测试面试题: 面试专题/接口测试面试题.md
+      - 自动化测试面试题: 面试专题/自动化测试面试题.md
+      - 项目经验表达: 面试专题/项目经验表达.md
+      - 简历撰写与项目包装: 面试专题/简历撰写与项目包装.md
+      - 岗位 JD 对照与投递策略: 面试专题/岗位JD对照与投递策略.md
+      - 面试流程与谈薪: 面试专题/面试流程与谈薪.md
+      - 面试复盘清单: 面试专题/面试复盘清单.md
+      - 测试职业发展路线图: 面试专题/测试职业发展路线图-软件测试版.md
+      - 性能测试面试题: 面试专题/性能测试面试题.md
+      - 安全测试面试题: 面试专题/安全测试面试题.md
+      - 移动端测试面试题: 面试专题/移动端测试面试题.md
+      - AI 测试面试题: 面试专题/AI测试面试题.md
+      - 测试管理面试题: 面试专题/测试管理面试题.md
+      - 数据库 SQL 面试题: 面试专题/数据库SQL面试题.md
+      - Linux 面试题: 面试专题/Linux面试题.md
+      - CI/CD 面试题: 面试专题/CICD面试题.md
+      - 测试岗位技能对照与补课指南: 面试专题/测试岗位技能对照与补课指南.md
+
+# 额外样式
+extra_css:
+  - stylesheets/extra.css
+
+# 页脚
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bingu7/test-tutorials
+  generator: false
+
+# 自定义代码块复制按钮提示
+extra_javascript:
+  - javascripts/common.js
+  - javascripts/navigation.js
+  - javascripts/quiz.js
+  - javascripts/progress.js
+  - javascripts/related.js
+  - javascripts/learning-progress.js
+  - javascripts/mermaid.js
+  - javascripts/codelab.js
+  - javascripts/interactive.js
